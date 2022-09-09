@@ -1,17 +1,25 @@
 apiVersion: opentelemetry.io/v1alpha1
 kind: OpenTelemetryCollector
 metadata:
-  name: otelcol
+  name: otel
 spec:
+  env:
+    - name: HOST_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.hostIP
   config: |
     receivers:
       otlp:
         protocols:
           grpc:
-          http:
     processors:
       batch:
     exporters:
+      otlp/elastic:
+        endpoint: ${HOST_IP}:8200
+        tls:
+          insecure: true
       logging:
         loglevel: debug
     service:
@@ -19,12 +27,12 @@ spec:
         traces:
           receivers: [otlp]
           processors: [batch]
-          exporters: [logging]
+          exporters: [logging, otlp/elastic]
         metrics:
           receivers: [otlp]
           processors: [batch]
-          exporters: [logging]
+          exporters: [logging, otlp/elastic]
         logs:
           receivers: [otlp]
           processors: [batch]
-          exporters: [logging]
+          exporters: [logging, otlp/elastic]

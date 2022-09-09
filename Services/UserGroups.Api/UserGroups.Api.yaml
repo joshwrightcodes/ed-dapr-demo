@@ -14,23 +14,23 @@ spec:
       batch:
     exporters:
       otlp:
-        endpoint: 10.1.0.75:4318
-      logging:
-        loglevel: debug
+        endpoint: otel-collector:4317
+        tls:
+          insecure: true
     service:
       pipelines:
         traces:
           receivers: [otlp]
           processors: [batch]
-          exporters: [logging]
+          exporters: [otlp]
         metrics:
           receivers: [otlp]
           processors: [batch]
-          exporters: [logging]
+          exporters: [otlp]
         logs:
           receivers: [otlp]
           processors: [batch]
-          exporters: [logging]
+          exporters: [otlp]
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -79,27 +79,3 @@ spec:
       protocol: TCP
   selector:
     app: usergroups-api
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: usergroups-api
-  namespace: eddemo-dapr
-  labels:
-    app: usergroups-api
-  annotations:
-    ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
-spec:
-  ingressClassName: nginx
-  rules:
-    - http:
-        paths:
-          - pathType: Prefix
-            path: /usergroups(/|$)(.*)
-            backend:
-              service:
-                name: usergroups-api
-                port:
-                  name: http

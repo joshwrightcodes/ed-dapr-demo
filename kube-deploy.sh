@@ -65,13 +65,20 @@ term() {
 
 up() {
   # Create Namespace
+  cli_log "Creating Namespace"
   kubectl apply -f Infra/namespace.yaml
   
+  # Create Ingress
+  cli_log "Creating Ingress"
+  kubectl apply -f Infra/ingress.yaml
+  
   # Create OpenTelemetry Collector
+  cli_log "Creating OpenTelemetry Collector"
   kubectl apply -f Infra/otel-collector.yaml -n ${NAMESPACE}
-  kubectl wait --for=condition=available --timeout=120s deployment/otelcol-collector -n ${NAMESPACE}
+  kubectl wait --for=condition=available --timeout=120s deployment/otel-collector -n ${NAMESPACE}
   
   # Create User Groups Demo Service
+  cli_log "Creating User Groups Api"
   kubectl apply -f Services/UserGroups.Api/UserGroups.Api.yaml  -n ${NAMESPACE}
 }
 
@@ -84,7 +91,11 @@ down() {
   # Tear Down OpenTelemetry Collector
   cli_log "Tearing down OpenTelemetry Collector"
   kubectl delete -f Infra/otel-collector.yaml -n ${NAMESPACE}
-  kubectl wait deployment/otelcol-collector --for=delete -n ${NAMESPACE}
+  kubectl wait deployment/otel-collector --for=delete -n ${NAMESPACE}
+  
+  # Tearing Down Ingress
+  cli_log "Tearing down Ingress"
+  kubectl delete -f Infra/ingress.yaml
   
   # Tear Down Namespace
   cli_log "Tearing down Namespace"
