@@ -18,6 +18,9 @@ tar xzf cmctl.tar.gz
 sudo mv cmctl /usr/local/bin
 ```
 
+# Install helm
+
+
 # Configure Open Telemetry Collector
 1. Install Cert Manager
     ```shell
