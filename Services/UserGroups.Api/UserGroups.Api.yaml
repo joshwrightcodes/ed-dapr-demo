@@ -90,13 +90,14 @@ metadata:
   annotations:
     ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: nginx
   rules:
     - http:
         paths:
           - pathType: Prefix
-            path: /
+            path: /usergroups(/|$)(.*)
             backend:
               service:
                 name: usergroups-api
