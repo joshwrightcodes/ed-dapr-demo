@@ -10,7 +10,12 @@ spec:
         protocols:
           grpc:
           http:
+      zipkin:
     processors:
+      memory_limiter:
+        check_interval: 5s
+        limit_mib: 4000
+        spike_limit_mib: 500
       batch:
     exporters:
       otlp:
@@ -20,7 +25,7 @@ spec:
     service:
       pipelines:
         traces:
-          receivers: [otlp]
+          receivers: [otlp,zipkin]
           processors: [batch]
           exporters: [otlp]
         metrics:
