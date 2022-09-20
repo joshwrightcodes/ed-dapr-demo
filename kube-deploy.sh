@@ -14,22 +14,24 @@ Dapr Demo CLI
 Version: $(cat "${DEMOCLI_WORKDIR}/scripts/VERSION")
 Usage: $cli_name [command]
 Commands:
-  init|i    Installs dependencies
-  term|t    Uninstalls dependencies
-  up|u      Deploys/Updates services
-  down|d    Tears down services
-  *         Help
+  setup|s         Installs dependencies
+  remove|r        Uninstalls dependencies
+  apply|a         Deploys/Updates services
+  applyKafka|ak   Deploys/Updates Kafka & Zookeeper
+  delete|d        Tears down services
+  deleteKafka|dk  Tears down Kafka & Zookeeper
+  *               Help
 "
   exit 1
 }
 
-init() {
+setup() {
   cli_log "Deploying Kubernetes Certificate Manager"
   helm upgrade \
     --install cert-manager cert-manager \
     --repo https://charts.jetstack.io \
     --namespace cert-manager --create-namespace \
-    --set installCRDs=true \
+    --values Infra/cert-manager.values.yaml \
     --wait --timeout=120s
   cmctl check api --wait=2m
   
@@ -38,6 +40,7 @@ init() {
     --install ingress-nginx ingress-nginx \
     --repo https://kubernetes.github.io/ingress-nginx \
     --namespace ingress-nginx --create-namespace \
+    --values Infra/ingress-nginx.values.yaml \
     --wait --timeout=120s
       
   cli_log "Deploying Dapr"
@@ -45,7 +48,7 @@ init() {
     --install dapr dapr \
     --repo https://dapr.github.io/helm-charts/ \
     --namespace dapr-system --create-namespace \
-    --set global.ha.enabled=true \
+    --values Infra/dapr.values.yaml \
     --wait --timeout=120s
     
   
@@ -53,12 +56,13 @@ init() {
   helm upgrade --install opentelemetry-operator opentelemetry-operator \
     --repo https://open-telemetry.github.io/opentelemetry-helm-charts \
     --namespace opentelemetry-operator-system --create-namespace \
+    --values Infra/opentelemetry-operator.values.yaml \
     --wait --timeout=120s
   
   cli_log "Initialised."
 }
 
-term() {
+remove() {
   # Create OpenTelemetry Operator
   cli_log "Removing OpenTelemetry Operator"
   helm uninstall opentelemetry-operator \
@@ -84,8 +88,9 @@ term() {
   cli_log "Terminated."
 }
 
-up() {
-  local label=$(date +%s)
+apply() {
+  local buildTimestamp=$(date +%s)
+  
   # Create Namespace
   cli_log "Creating Namespace"
   kubectl apply -f Infra/namespace.yaml
@@ -103,14 +108,33 @@ up() {
   cli_log "Building User Groups Api"
   docker build  \
     --tag "ed-demo/dapr-usergroups-api:latest" \
-    --tag "ed-demo/dapr-usergroups-api:$label" \
+    --tag "ed-demo/dapr-usergroups-api:$buildTimestamp" \
     --file Services/UserGroups.Api/Dockerfile \
     .
+
   cli_log "Creating User Groups Api"
   kubectl apply -f Services/UserGroups.Api/UserGroups.Api.yaml  -n ${NAMESPACE}
 }
 
-down() {
+applyKafka()
+{
+  cli_log "Deploying Kafka & Zookeeper"
+    helm upgrade --install kafka kafka \
+      --repo https://charts.bitnami.com/bitnami \
+      --namespace ${NAMESPACE} \
+      --values Infra/kafka.values.yaml \
+      --wait --timeout=5m
+}
+
+deleteKafka()
+{
+  cli_log "Removing Kafka & Zookeeper"
+  helm uninstall kafka \
+    --namespace ${NAMESPACE} \
+    --wait --timeout=240s
+}
+
+delete() {
   # Tear Down User Groups Demo Service
   cli_log "Tearing down User Group Api"
   kubectl delete -f Services/UserGroups.Api/UserGroups.Api.yaml -n ${NAMESPACE}
@@ -132,17 +156,23 @@ down() {
 }
 
 case ${CMD} in
-  init|i)
-    init
+  setup|s)
+    setup
     ;;
-  term|t)
-    term
+  remove|r)
+    remove
     ;;
-  up|u)
-    up
+  apply|a)
+    apply
     ;;
-  down|d)
-    down
+  applyKafka|ak)
+    applyKafka
+    ;;
+  delete|d)
+    delete
+    ;;
+  deleteKafka|dk)
+    deleteKafka
     ;;
   *)
     cli_help

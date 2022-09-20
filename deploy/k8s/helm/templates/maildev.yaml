@@ -1,0 +1,69 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: smtp-cm
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.app }}
+    service: smtp
+data:
+  ASPNETCORE_ENVIRONMENT: Development
+  ASPNETCORE_URLS: http://0.0.0.0:80
+  # https://github.com/rnwood/smtp4dev/wiki/Configuration#environment-variables
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smtp
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.app }}
+    service: smtp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: smtp
+  template:
+    metadata:
+      labels:
+        service: smtp
+    spec:
+      containers:
+        - name: smtp
+          image: rnwood/smtp4dev:latest
+          ports:
+            - name: api-http
+              containerPort: 80
+              protocol: TCP
+            - name: api-smtp
+              containerPort: 25
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: smtp-cm
+              
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: smtp
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ .Values.app }}
+    service: smtp
+spec:
+  selector:
+    app: smtp
+  ports:
+    - name: smtp
+      protocol: TCP
+      port: 25
+      targetPort: api-smtp
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: api-http
+

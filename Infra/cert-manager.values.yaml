@@ -1,0 +1,313 @@
+# https://artifacthub.io/packages/helm/cert-manager/cert-manager
+#global:
+  # Reference to one or more secrets to be used when pulling images
+#  imagePullSecrets:
+  
+#  rbac:
+    # If true, create and use RBAC resources (includes sub-charts)
+#    create: true
+  
+#  podSecurityPolicy:
+    # If true, create and use PodSecurityPolicy (includes sub-charts)
+#    enabled: false
+    # If true, use Apparmor seccomp profile in PSP
+#    useAppArmor: true
+  
+#  leaderElection:
+    # Override the namespace used to store the ConfigMap for leader election
+#    namespace: kube-system
+    # The duration that non-leader candidates will wait after observing a leadership renewal until attempting to acquire leadership of a led but unrenewed leader slot. This is effectively the maximum duration that a leader can be stopped before it is replaced by another candidate
+#    leaseDuration:
+    # The interval between attempts by the acting master to renew a leadership slot before it stops leading. This must be less than or equal to the lease duration
+#    renewDeadline:
+    # The duration the clients should wait between attempting acquisition and renewal of a leadership
+#    retryPeriod:
+
+# If true, CRD resources will be installed as part of the Helm chart. If enabled, when uninstalling CRD resources will be deleted causing all installed custom resources to be DELETED
+installCRDs: true
+
+#image:
+#  # Image repository
+#  repository: quay.io/jetstack/cert-manager-controller
+#  # Image tag
+#  tag: v1.9.1
+#  # Image pull policy
+#  pullPolicy: IfNotPresent
+
+# Number of cert-manager replicas
+#replicaCount: 1
+
+# Override the namespace used to store DNS provider credentials etc. for ClusterIssuer resources
+#clusterResourceNamespace:
+
+# Set of comma-separated key=value pairs that describe feature gates on the controller. Some feature gates may also have to be enabled on other components, and can be set supplying the feature-gate flag to <component>.extraArgs
+#featureGates:
+
+# Optional flags for cert-manager
+#extraArgs:
+
+# Optional environment variables for cert-manager
+#extraEnv:
+
+#serviceAccount:
+#  # If true, create a new service account
+#  create: true
+#  # Service account to be used. If not set and serviceAccount.create is true, a name is generated using the fullname template
+#  name:
+#  # Annotations to add to the service account
+#  annotations:
+#  # Automount API credentials for the Service Account
+#  automountServiceAccountToken: true
+
+# Optional volumes for cert-manager
+#volumes:
+
+# Optional volume mounts for cert-manager
+#volumeMounts:
+
+# CPU/memory resource requests/limits
+#resources:
+
+# Optional security context. The yaml block should adhere to the SecurityContext spec https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.22/#securitycontext-v1-core
+#securityContext:
+
+# Security context to be set on the controller component container
+#containerSecurityContext:
+
+# Node labels for pod assignment
+#nodeSelector:
+
+# Node affinity for pod assignment
+#affinity:
+
+# Node tolerations for pod assignment
+#tolerations:
+  
+#ingressShim:
+#  # Optional default issuer to use for ingress resources
+#  defaultIssuerName:
+#  # Optional default issuer kind to use for ingress resources
+#  defaultIssuerKind:
+#  # Optional default issuer group to use for ingress resources
+#  defaultIssuerGroup:
+  
+#prometheus:
+#  # Enable Prometheus monitoring
+#  enabled: true
+#  servicemonitor:
+#    # Enable Prometheus Operator ServiceMonitor monitoring
+#    enabled: false
+#    # Define namespace where to deploy the ServiceMonitor resource
+#    namespace:
+#    # Prometheus Instance definition
+#    prometheusInstance: default
+#    # Prometheus scrape port
+#    targetPort: 9402
+#    # Prometheus scrape path
+#    path: /metrics
+#    # Prometheus scrape interval
+#    interval: 60s
+#    # Add custom labels to ServiceMonitor
+#    labels:
+#    # Prometheus scrape timeout
+#    scrapeTimeout: 30s
+#    # Enable label honoring for metrics scraped by Prometheus (see Prometheus scrape config docs for details). By setting honorLabels to true, Prometheus will prefer label contents given by cert-manager on conflicts. Can be used to remove the "exported_namespace" label for example. https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config
+#    honorLabels: false
+
+# Annotations to add to the cert-manager pod
+#podAnnotations:
+  
+# Annotations to add to the cert-manager deployment
+#deploymentAnnotations:
+
+# Optional cert-manager pod DNS policy https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pods-dns-policy
+#podDnsPolicy:
+
+# Optional cert-manager pod DNS configurations https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pods-dns-config
+#podDnsConfig:
+
+# Labels to add to the cert-manager pod
+#podLabels:
+
+# Labels to add to the cert-manager controller service
+#serviceLabels:
+
+# Annotations to add to the cert-manager service
+#serviceAnnotations:
+
+# Value of the HTTP_PROXY environment variable in the cert-manager pod
+#http_proxy:
+
+# Value of the HTTPS_PROXY environment variable in the cert-manager pod
+#https_proxy:
+
+# Value of the NO_PROXY environment variable in the cert-manager pod
+#no_proxy:
+
+#webhook:
+#  # Number of cert-manager webhook replicas
+#  replicaCount: 1
+#  # Seconds the API server should wait the webhook to respond before treating the call as a failure.
+#  timeoutSeconds: 10
+#  # Annotations to add to the webhook pods
+#  podAnnotations:
+#  # Labels to add to the cert-manager webhook pod
+#  podLabels:
+#  # Labels to add to the cert-manager webhook service
+#  serviceLabels:
+#  # Annotations to add to the webhook deployment
+#  deploymentAnnotations:
+#  # Annotations to add to the mutating webhook configuration
+#  mutatingWebhookConfigurationAnnotations:
+#  # Annotations to add to the validating webhook configuration
+#  validatingWebhookConfigurationAnnotations:
+#  # Annotations to add to the webhook service
+#  serviceAnnotations:
+#  # WebhookConfiguration YAML used to configure flags for the webhook. Generates a ConfigMap containing contents of the field. See values.yaml for example.
+#  config:
+#  # Optional flags for cert-manager webhook component
+#  extraArgs:
+#  serviceAccount:
+#    # If true, create a new service account for the webhook component
+#    create: true
+#    # Service account for the webhook component to be used. If not set and webhook.serviceAccount.create is true, a name is generated using the fullname template
+#    name:
+#    # Annotations to add to the service account for the webhook component
+#    annotations:
+#    # Automount API credentials for the webhook Service Account
+#    automountServiceAccountToken:
+#  # CPU/memory resource requests/limits for the webhook pods
+#  resources:
+#  # Node labels for webhook pod assignment
+#  nodeSelector:
+#  # Node affinity for webhook pod assignment
+#  affinity:
+#  # Node tolerations for webhook pod assignment
+#  tolerations:
+#  image:
+#    # Webhook image repository
+#    repository: quay.io/jetstack/cert-manager-webhook
+#    # Webhook image tag
+#    tag: v1.9.1
+#    # Webhook image pull policy
+#    pullPolicy: IfNotPresent
+#  # The port that the webhook should listen on for requests.
+#  securePort: 10250
+#  # Security context for webhook pod assignment
+#  securityContext:
+#  # If true, run the Webhook on the host network.
+#  hostNetwork: false
+#  # The type of the Service.
+#  serviceType: ClusterIP
+#  # The specific load balancer IP to use (when serviceType is LoadBalancer).
+#  loadBalancerIP:
+#  # The host to use to reach the webhook, instead of using internal cluster DNS for the service.
+#  url:host:
+#  livenessProbe:
+#    # The liveness probe failure threshold
+#    failureThreshold: 3
+#    # The liveness probe initial delay (in seconds)
+#    initialDelaySeconds: 60
+#    # The liveness probe period (in seconds)
+#    periodSeconds: 10
+#    # The liveness probe success threshold
+#    successThreshold: 1
+#    # The liveness probe timeout (in seconds)
+#    timeoutSeconds: 1
+#  readinessProbe:
+#    # The readiness probe failure threshold
+#    failureThreshold: 3
+#    # The readiness probe initial delay (in seconds)
+#    initialDelaySeconds: 5
+#    # The readiness probe period (in seconds)
+#    periodSeconds: 5
+#    # The readiness probe success threshold
+#    successThreshold: 1
+#    # The readiness probe timeout (in seconds)
+#    timeoutSeconds: 1
+  
+#cainjector:
+#  # Toggles whether the cainjector component should be installed (required for the webhook component to work)
+#  enabled: true
+#  # Number of cert-manager cainjector replicas
+#  replicaCount: 1
+#  # Annotations to add to the cainjector pods
+#  podAnnotations: 
+#  # Labels to add to the cert-manager cainjector pod
+#  podLabels:
+#  # Annotations to add to the cainjector deployment
+#  deploymentAnnotations:
+#  # Optional flags for cert-manager cainjector component
+#  extraArgs:
+#  serviceAccount:
+#    # If true, create a new service account for the cainjector component
+#    create: true
+#    # Service account for the cainjector component to be used. If not set and `cainjector.serviceAccount.create` is `true`, a name is generated using the fullname template
+#    name:
+#    # Annotations to add to the service account for the cainjector component
+#    annotations:
+#    # Automount API credentials for the cainjector Service Account
+#    automountServiceAccountToken: true
+#  # CPU/memory resource requests/limits for the cainjector pods
+#  resources:
+#  # Node labels for cainjector pod assignment
+#  nodeSelector:
+#  # Node affinity for cainjector pod assignment
+#  affinity:
+#  # Node tolerations for cainjector pod assignment
+#  tolerations:
+#  image:
+#    # cainjector image repository
+#    repository: quay.io/jetstack/cert-manager-cainjector
+#    # cainjector image tag
+#    tag: v1.9.1
+#    # cainjector image pull policy
+#    pullPolicy: IfNotPresent
+#  # Security context for cainjector pod assignment
+#  securityContext:
+#  # Security context to be set on cainjector component container
+#  containerSecurityContext:
+  
+#startupapicheck:
+#  # Toggles whether the startupapicheck Job should be installed
+#  enabled: true
+#  # Pod Security Context to be set on the startupapicheck component Pod
+#  securityContext:
+#  # Timeout for 'kubectl check api' command
+#  timeout: 1m
+#  # Job backoffLimit
+#  backoffLimit: 4
+#  # Optional additional annotations to add to the startupapicheck Job
+#  jobAnnotations:
+#  # Optional additional annotations to add to the startupapicheck Pods
+#  podAnnotations:
+#  # Optional additional arguments for startupapicheck
+#  extraArgs:
+#  # CPU/memory resource requests/limits for the startupapicheck pod
+#  resources:
+#  # Node labels for startupapicheck pod assignment
+#  nodeSelector:
+#  # Node affinity for startupapicheck pod assignment
+#  affinity:
+#  # Node tolerations for startupapicheck pod assignment
+#  tolerations:
+#  # Optional additional labels to add to the startupapicheck Pods
+#  podLabels:
+#  # startupapicheck image repository
+#  image:
+#    # startupapicheck image tag
+#    repository: quay.io/jetstack/cert-manager-ctl
+#    # startupapicheck image tag
+#    tag: v1.9.1
+#    # startupapicheck image pull policy
+#    pullPolicy: IfNotPresent
+#  serviceAccount:
+#    # If true, create a new service account for the startupapicheck component
+#    create: true
+#    # Service account for the startupapicheck component to be used. If not set and startupapicheck.serviceAccount.create is true, a name is generated using the fullname template
+#    name:
+#    # Annotations to add to the service account for the startupapicheck component
+#    annotations:
+#    # Automount API credentials for the startupapicheck Service Account
+#    automountServiceAccountToken: true
+    

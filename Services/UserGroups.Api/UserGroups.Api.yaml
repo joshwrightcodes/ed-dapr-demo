@@ -2,6 +2,8 @@ apiVersion: opentelemetry.io/v1alpha1
 kind: OpenTelemetryCollector
 metadata:
   name: usergroups-api-otel
+  labels:
+    app: usergroups-api
 spec:
   mode: sidecar
   config: |
@@ -11,6 +13,13 @@ spec:
           grpc:
           http:
       zipkin:
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: "dapr-otel-collector"
+              scrape_interval: 5s
+              static_configs:
+                - targets: ["localhost:9090"]
     processors:
       memory_limiter:
         check_interval: 5s
@@ -29,13 +38,25 @@ spec:
           processors: [batch]
           exporters: [otlp]
         metrics:
-          receivers: [otlp]
+          receivers: [otlp,prometheus]
           processors: [batch]
           exporters: [otlp]
         logs:
           receivers: [otlp]
           processors: [batch]
           exporters: [otlp]
+---
+apiVersion: dapr.io/v1alpha1
+kind: Configuration
+metadata:
+  name: usergroups-api-daprconfig
+  labels:
+    app: usergroups-api
+spec:
+  tracing:
+    samplingRate: "1"
+    zipkin:
+      endpointAddress: "http://localhost:9411/api/v2/spans"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -54,6 +75,11 @@ spec:
         app: usergroups-api
       annotations:
         sidecar.opentelemetry.io/inject: "true"
+        dapr.io/enabled: "true"
+        dapr.io/app-id: usergroups-api
+        dapr.io/log-as-json: "true"
+        dapr.io/enable-metrics: "true"
+        dapr.io/metrics-port: "9090"
     spec:
       containers:
         - name: usergroups-api
