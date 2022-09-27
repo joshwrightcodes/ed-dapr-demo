@@ -31,4 +31,5 @@
     <ItemGroup>
         <AdditionalFiles Include=".\..\..\stylecop.json"/>
     </ItemGroup>
+    
 </Project>

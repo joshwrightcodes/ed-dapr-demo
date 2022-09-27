@@ -10,6 +10,7 @@
         <PackageVersion Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="10.0.1"/>
         <PackageVersion Include="MicroElements.Swashbuckle.FluentValidation" Version="5.7.0"/>
         <PackageVersion Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="6.0.6"/>
+        <PackageVersion Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.2.0"/>
         <PackageVersion Include="Microsoft.AspNetCore.Mvc.Versioning" Version="5.0.0"/>
         <PackageVersion Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" Version="5.0.0"/>
         <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.6"/>
@@ -21,6 +22,7 @@
         <packageVersion Include="Microsoft.Extensions.Configuration" Version="6.0.0"/>
         <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0"/>
         <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="6.0.6"/>
+        <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0"/>
         <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1"/>
         <PackageVersion Include="Microsoft.Extensions.Hosting" Version="6.0.1"/>
         <PackageVersion Include="Npgsql" Version="6.0.5"/>

@@ -8,6 +8,8 @@
 using System.Diagnostics;
 using System.Reflection;
 using BasePathFilter;
+using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.OpenApi.Models;
 using OpenTelemetry;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
@@ -15,7 +17,7 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
-const string serviceName = "EdDemo.Dapr.UserGroupsApi";
+const string serviceName = "EdDemo.Dapr.UsersApi";
 const string assemblyVersion = "1.0.0";
 
 var builder = WebApplication.CreateBuilder(args);
@@ -97,7 +99,10 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseForwardedHeaders();
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+	ForwardedHeaders = ForwardedHeaders.All,
+});
 
 // Enable Health Checks
 app.UseHealthChecks("/health");

@@ -1,0 +1,140 @@
+# Default values for users-api.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Labels to apply to all resources
+global:
+  commonLabels: {}
+  part_of: ""
+
+replicaCount: 1
+
+image:
+  repository: daprdemo/users-api
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/backend-protocol: "http"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  hosts:
+    - host: localhost
+      paths:
+        - path: /users(/|$)(.*)
+          pathType: Prefix
+  tls: []
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+dapr:
+  enable: true
+  logAsJson: true
+  appPort: 80
+  tracing:
+    samplingRate: 1
+    zipkin:
+      endpoint: "http://localhost:9411/api/v2/spans"
+  
+openTelemetry:
+  enableSideCar: true
+  
+containerPorts:
+  http: 80
+    
+# startupProbe:
+#   httpGet:
+#     path: "/health"
+#     port: 10254
+#     scheme: HTTP
+#   initialDelaySeconds: 5
+#   periodSeconds: 5
+#   timeoutSeconds: 2
+#   successThreshold: 1
+#   failureThreshold: 5
+livenessProbe:
+  httpGet:
+    path: "/health"
+    port: 80
+    scheme: HTTP
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  timeoutSeconds: 1
+  successThreshold: 1
+  failureThreshold: 5
+readinessProbe:
+  httpGet:
+    path: "/health"
+    port: 80
+    scheme: HTTP
+  initialDelaySeconds: 5
+  periodSeconds: 5
+  timeoutSeconds: 1
+  successThreshold: 1
+  failureThreshold: 3
+  
+extraEnv:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: Development
+  - name: ASPNETCORE_URLS
+    value: http://0.0.0.0:80
