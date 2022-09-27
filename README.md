@@ -103,7 +103,7 @@ All commands are from the root directory.
 
 ### Running the application
 
-1. Grab Helm Dependencies
+1. Grab Helm Dependencies (First Time)
    ```shell
    helm dependency update ./deploy/k8s/helm/dapr-demo/
    helm dependency build ./deploy/k8s/helm/dapr-demo/
@@ -124,7 +124,8 @@ All commands are from the root directory.
 
 1. Uninstall Helm Chart
    ```shell
-   helm uninstall dapr-demo --namespace dapr-demo
+   helm uninstall dapr-demo \
+     --namespace dapr-demo
    ```
 2. Delete Namespace
    ```shell
@@ -132,9 +133,9 @@ All commands are from the root directory.
    ```
 
 ## Further Reading
-[OpenTelemetry Collector - Getting Started](https://opentelemetry.io/docs/collector/getting-started/)
-[Dapr - Getting Started](https://docs.dapr.io/getting-started/)
-[Deploy Dapr on a Kubernetes cluster](https://docs.dapr.io/operations/hosting/kubernetes/kubernetes-deploy/)
+- [OpenTelemetry Collector - Getting Started](https://opentelemetry.io/docs/collector/getting-started/)
+- [Dapr - Getting Started](https://docs.dapr.io/getting-started/)
+- [Deploy Dapr on a Kubernetes cluster](https://docs.dapr.io/operations/hosting/kubernetes/kubernetes-deploy/)
 
 
 
