@@ -3,12 +3,10 @@ kind: OpenTelemetryCollector
 metadata:
   annotations:
     helm.sh/hook: pre-install,pre-upgrade
-  labels:
-    {{- include "daprdemo.labels" . | nindent 4 }}
-    app.kubernetes.io/service: {{ include "daprdemo.usergroups.api.name" . }}
-    app.kubernetes.io/component: {{ include "daprdemo.usergroups.api.name" . }}
-  name: {{ include "daprdemo.usergroups.api.name" . }}-opentelemetry-sidecar
+  name: {{ include "dapr-demo.fullname" . }}
   namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "dapr-demo.labels" . | nindent 4 }}
 spec:
   mode: sidecar
   config: |-
@@ -39,7 +37,7 @@ spec:
         timeout: 30s
     exporters:
       otlp:
-        endpoint: {{ include "daprdemo.opentelemetry_collector.fullname" . | trim -}}:4317
+        endpoint: {{ include "opentelemetry-collector.fullname" . | trim -}}:4317
         tls:
           insecure: true
     service:

@@ -111,7 +111,9 @@ All commands are from the root directory.
 2. Build Images
    ```shell
    VERSION=$(date +"%s")
-   docker build --tag daprdemo/usergroups-api:latest --tag daprdemo/usergroups-api:${VERSION} --file Services/UserGroups.Api/Dockerfile .
+   echo version: ${VERSION}
+   docker build --tag daprdemo/usergroups-api:latest --tag daprdemo/usergroups-api:${VERSION} --file services/UserGroups.Api/Dockerfile .
+   docker build --tag daprdemo/users-api:latest --tag daprdemo/users-api:${VERSION} --file services/Users.Api/Dockerfile .
    ```
 3. Deploy Service
    ```shell

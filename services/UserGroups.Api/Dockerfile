@@ -6,12 +6,12 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine AS build
 RUN apk update && apk upgrade
 WORKDIR /src
-COPY ["Services/UserGroups.Api/UserGroups.Api.csproj", "Services/UserGroups.Api/"]
+COPY ["services/UserGroups.Api/UserGroups.Api.csproj", "services/UserGroups.Api/"]
 COPY ["Directory.Build.props", ""]
 COPY ["Directory.Packages.props", ""]
-RUN dotnet restore "Services/UserGroups.Api/UserGroups.Api.csproj"
+RUN dotnet restore "services/UserGroups.Api/UserGroups.Api.csproj"
 COPY . .
-WORKDIR "/src/Services/UserGroups.Api"
+WORKDIR "/src/services/UserGroups.Api"
 RUN dotnet build "UserGroups.Api.csproj" -c Release -o /app/build
 
 FROM build AS publish

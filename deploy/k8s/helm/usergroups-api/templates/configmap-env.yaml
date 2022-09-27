@@ -1,0 +1,13 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ include "usergroups-api.fullname" . }}-env
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "usergroups-api.labels" . | nindent 4 }}
+data:
+  {{- if .Values.extraEnv -}}
+  {{- range $key, $value := .Values.extraEnv }}
+  {{ $value.name }}: {{ $value.value | quote}}
+  {{- end -}}
+  {{- end -}}

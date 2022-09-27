@@ -7,6 +7,7 @@
 
 using System.Diagnostics;
 using System.Reflection;
+using BasePathFilter;
 using OpenTelemetry;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
@@ -18,6 +19,8 @@ const string serviceName = "EdDemo.Dapr.UserGroupsApi";
 const string assemblyVersion = "1.0.0";
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddBasePathMiddleware(builder.Configuration);
 
 // Open Telemetry
 var configureResource = ResourceBuilder
