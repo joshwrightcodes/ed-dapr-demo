@@ -1,0 +1,16 @@
+apiVersion: dapr.io/v1alpha1
+kind: Configuration
+metadata:
+  labels:
+    {{- include "daprdemo.labels" . | nindent 4 }}
+    app.kubernetes.io/service: {{ include "daprdemo.usergroups.api.name" . }}
+    app.kubernetes.io/component: {{ include "daprdemo.usergroups.api.name" . }}
+  name: {{ include "daprdemo.usergroups.api.name" . }}-daprconfig
+  namespace: {{ .Release.Namespace }}
+spec:
+  {{- with .Values.pods.dapr }}
+  tracing:
+    samplingRate: {{ .samplingRate | int | default "1" | quote }}
+    zipkin:
+      endpointAddress: {{ .zipkin.endpoint }}
+  {{- end }}

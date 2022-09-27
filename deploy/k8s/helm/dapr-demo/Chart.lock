@@ -1,0 +1,9 @@
+dependencies:
+- name: opentelemetry-collector
+  repository: https://open-telemetry.github.io/opentelemetry-helm-charts
+  version: 0.31.2
+- name: mailhog
+  repository: https://codecentric.github.io/helm-charts
+  version: 5.2.0
+digest: sha256:f0f0127eeba16911f6cd77d37f521d41123a7e22a9e699421a2a28a3b3440862
+generated: "2022-09-26T16:15:23.752712+10:00"
