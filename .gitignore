@@ -1,3 +1,6 @@
+**/helm/**/charts
+**/helm/charts
+.DS_Store
 bin/
 obj/
 /packages/

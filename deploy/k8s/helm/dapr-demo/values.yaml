@@ -1,0 +1,222 @@
+## Overrides for generated resource names
+# See templates/_helpers.tpl
+# nameOverride:
+# fullnameOverride:
+
+## Labels to apply to all resources
+##
+commonLabels: {}
+# scmhash: abc123
+# myLabel: aakkmd
+
+global:
+  open_telemetry_collector:
+    
+userGroups:
+  api:
+    name: "usergroups-api"
+    replicas: 1
+    updateStrategy: {}
+    image:
+      name: daprdemo/usergroups-api
+      tag: latest
+#      registry:
+      pullPolicy: IfNotPresent
+    containerPort:
+      http: 80
+    service:
+      enableHttp: true
+      enableHttps: false
+      ports:
+        http: 80
+        https: 443
+      targetPorts:
+        http: http
+        https: https
+    environmentVariables:
+      ASPNETCORE_URLS: http://0.0.0.0:80
+    ## Liveness and readiness probe values
+    ## Ref: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#container-probes
+    ##
+    # startupProbe:
+    #   httpGet:
+    #     # should match container.healthCheckPath
+    #     path: "/health"
+    #     port: 10254
+    #     scheme: HTTP
+    #   initialDelaySeconds: 5
+    #   periodSeconds: 5
+    #   timeoutSeconds: 2
+    #   successThreshold: 1
+    #   failureThreshold: 5
+    livenessProbe:
+      httpGet:
+        # should match container.healthCheckPath
+        path: "/health"
+        port: 80
+        scheme: HTTP
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      timeoutSeconds: 1
+      successThreshold: 1
+      failureThreshold: 5
+    readinessProbe:
+      httpGet:
+        # should match container.healthCheckPath
+        path: "/health"
+        port: 80
+        scheme: HTTP
+      initialDelaySeconds: 5
+      periodSeconds: 5
+      timeoutSeconds: 1
+      successThreshold: 1
+      failureThreshold: 3
+  opentelemetry_sidecar:
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+          http:
+      zipkin:
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: "dapr-otel-collector"
+              scrape_interval: 5s
+              static_configs:
+                - targets: [ "http://localhost:9411/api/v2/spans" ]
+    processors:
+      memory_limiter:
+        check_interval: 5s
+        limit_mib: 1500
+        spike_limit_mib: 512
+      #        queued_retry:
+      #          num_workers: 4
+      #          queue_size: 100
+      #          retry_on_failure: true
+      batch:
+        send_batch_size: 1000
+        timeout: 30s
+    exporters:
+      otlp:
+        endpoint: otel-collector:4317
+        tls:
+          insecure: true
+    service:
+      pipelines:
+        traces:
+          receivers: [ otlp,zipkin ]
+          processors: [ memory_limiter, queued_retry, batch ]
+          exporters: [ otlp ]
+        metrics:
+          receivers: [ otlp,prometheus ]
+          processors: [ memory_limiter, queued_retry, batch ]
+          exporters: [ otlp ]
+        logs:
+          receivers: [ otlp ]
+          processors: [ memory_limiter, queued_retry, batch ]
+          exporters: [ otlp ]
+mailhog:
+  extraEnv:
+    - name: MH_UI_WEB_PATH
+      value: dapr-demo/mail
+
+pods:
+  dapr:
+    samplingRate: "1"
+    zipkin:
+      endpoint: http://localhost:9411/api/v2/spans # exposed by otel sidecar
+    prometheus:
+      targets: ["localhost:9090"] # exposed by dapr sidecar
+      scrapeInterval: 5s
+  opentelemetry_sidecar:
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+          http:
+      zipkin:
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: "dapr-otel-collector"
+              scrape_interval: 5s
+              static_configs:
+                - targets: ["http://localhost:9411/api/v2/spans"]
+      processors:
+        memory_limiter:
+          check_interval: 5s
+          limit_mib: 1500
+          spike_limit_mib: 512
+#        queued_retry:
+#          num_workers: 4
+#          queue_size: 100
+#          retry_on_failure: true
+        batch:
+          send_batch_size: 1000
+          timeout: 30s
+      exporters:
+        otlp:
+          endpoint: otel-collector:4317
+          tls:
+            insecure: true
+      service:
+        pipelines:
+          traces:
+            receivers: [ otlp,zipkin ]
+            processors: [ memory_limiter, batch ]
+            exporters: [ otlp ]
+          metrics:
+            receivers: [ otlp,prometheus ]
+            processors: [ memory_limiter, batch ]
+            exporters: [ otlp ]
+          logs:
+            receivers: [ otlp ]
+            processors: [ memory_limiter, batch ]
+            exporters: [ otlp ]
+
+opentelemetry-collector:
+  mode: deployment
+  presets: 
+    logsCollection:
+      enabled: true
+      includeCollectorLogs: true
+  config:
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+          http:
+    exporters:
+#      otel/elastic:
+#        endpoint: ${MY_POD_IP}:8200
+#        tls:
+#          insecure: true
+      logging:
+        logLevel: debug
+    processors:
+      memory_limiter:
+        check_interval: 5s
+        limit_mib: 1500
+        spike_limit_mib: 512
+#      queued_retry:
+#        num_workers: 4
+#        queue_size: 100
+#        retry_on_failure: true
+      batch:
+        send_batch_size: 1000
+        timeout: 30s
+    service:
+      pipelines:
+        traces:
+          receivers: [ otlp ]
+          processors: [ batch ]
+          exporters: [ logging ]
+        metrics:
+          receivers: [ otlp ]
+          processors: [ batch ]
+          exporters: [ logging ]
+        logs:
+          receivers: [ otlp ]
+          processors: [ batch ]
+          exporters: [ logging ]

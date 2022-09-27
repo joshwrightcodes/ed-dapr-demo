@@ -1,9 +1,10 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+﻿FROM mcr.microsoft.com/dotnet/aspnet:6.0-alpine AS base
+RUN apk update && apk upgrade
 WORKDIR /app
 EXPOSE 80
-EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine AS build
+RUN apk update && apk upgrade
 WORKDIR /src
 COPY ["Services/UserGroups.Api/UserGroups.Api.csproj", "Services/UserGroups.Api/"]
 COPY ["Directory.Build.props", ""]

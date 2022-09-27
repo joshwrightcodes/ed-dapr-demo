@@ -1,0 +1,9 @@
+# Dapr Helm Config https://github.com/dapr/dapr/blob/master/charts/dapr/README.md#configuration
+global:
+  logAsJson: true
+  ha:
+    enabled: true
+  prometheus:
+    enabled: true
+    port: 9090             
+  daprControlPlainArch: arm64

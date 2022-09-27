@@ -1,0 +1,20 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  labels:
+    {{- include "daprdemo.labels" . | nindent 4 }}
+  name: {{ include "daprdemo.name" . }}-selfsigned-ca
+  namespace: {{ .Release.Namespace }}
+spec:
+  dnsNames:
+    - "*.{{ .Release.Namespace }}.svc.cluster.local"
+    - "*.{{ .Release.Namespace }}"
+  commonName: {{ include "daprdemo.name" . }}-selfsigned-ca
+  secretName: {{ include "daprdemo.name" . }}-selfsigned-ca
+  privateKey:
+    algorithm: ECDSA
+    size: 256
+  issuerRef:
+    name: selfsigned-cluster-issuer
+    kind: ClusterIssuer
+    group: cert-manager.io

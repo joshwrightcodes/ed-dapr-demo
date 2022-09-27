@@ -1,0 +1,10 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  labels:
+    {{- include "daprdemo.labels" . | nindent 4 }}
+  name: {{ include "daprdemo.name" . }}-issuer
+  namespace: {{ .Release.Namespace }}
+spec:
+  selfSigned: {}
+  

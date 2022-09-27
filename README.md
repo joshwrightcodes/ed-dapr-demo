@@ -8,6 +8,11 @@ The following software is required to be installed to run this application
 
 1. Golang
 2. Kubernetes _flavour of your choosing_
+   - if using minikube with docker engine, run the following if you have issues finding the image
+   ```shell
+   eval $(minikube docker-env)
+   ```
+   
 3. Kubernetes Command Line Tool (`kubectl`)
 4. Kubernetes cert-manager Command Line Tool (`cmctl`)
    This can be installed by running the below script in `bash` or similar shell:
@@ -39,28 +44,92 @@ The following software is required to be installed to run this application
 
 ### Prepare Environment
 
-1. (Optional) Fix script permissions
+This project has the following requirements that need to be installed prior to running the solution:
+- Certificate Manager
+- Dapr (CLI & Runtime)
+- NGINX Ingress Controller
+- OpenTelemetry Operator
+
+All commands are from the root directory.
+
+1. Install Certificate Manager in Kubernetes (if required)
    ```shell
-   chmod +x kube-deploy.sh
+   helm upgrade \
+    --install cert-manager cert-manager \
+    --repo https://charts.jetstack.io \
+    --namespace cert-manager --create-namespace \
+    --values deploy/k8s/helm/dependencies/values/cert-manager.values.yaml \
+    --wait --timeout=120s
    ```
-2. Initialise Dapr
+2. Deploy Self-Signed Cluster Issuer
    ```shell
-   dapr init -k --enable-ha=true --wait --timeout 600
+   kubectl apply deploy/k8s/helm/dependencies/bootstrap/cert-manager-clusterissuer.yaml
    ```
-3. Run script `./kube-deploy.sh init` to install the initial requirements
-   - Kubernetes Certificate Manager
-   - NGINX Ingress Controller
-   - OpenTelemetry Operator
+3. Install Dapr Cli (if required)
+   ```shell
+   brew install dapr
+   ```
+4. Install Dapr in Kubernetes (if required)
+   ```shell
+   helm upgrade \
+    --install dapr dapr \
+    --repo https://dapr.github.io/helm-charts/ \
+    --namespace dapr-system --create-namespace \
+    --values deploy/k8s/helm/dependencies/values/dapr.values.yaml \
+    --wait --timeout=120s
+   ```
+5. Install NGINX Ingress Controller in Kubernetes (if required)  
+   _Minikube:_
+   ```shell
+   minikube addons enable ingress
+   ```
+   _Others_
+   ```shell
+   helm upgrade \
+    --install ingress-nginx ingress-nginx \
+    --repo https://kubernetes.github.io/ingress-nginx \
+    --namespace ingress-nginx --create-namespace \
+    --values deploy/k8s/helm/dependencies/values/ingress-nginx.values.yaml \
+    --wait --timeout=5m
+   ```
+6. Install OpenTelemetry Operator in Kubernetes (if required)
+   ```shell
+   helm upgrade --install opentelemetry-operator opentelemetry-operator \
+    --repo https://open-telemetry.github.io/opentelemetry-helm-charts \
+    --namespace opentelemetry-operator-system --create-namespace \
+    --values deploy/k8s/helm/dependencies/values/opentelemetry-operator.values.yaml \
+    --wait --timeout=5m
+   ```
 
 ### Running the application
 
-1. Run script `./kube-deploy.sh up` to build and deploy services and sidecars
-   - UserGroups API (`/usergroups`)
-     Build Container from root
-     ```shell
-     docker build --tag ed-demo/dapr-usergroups-api:latest --file Services/UserGroups.Api/Dockerfile .
-     ```
+1. Grab Helm Dependencies
+   ```shell
+   helm dependency update ./deploy/k8s/helm/dapr-demo/
+   helm dependency build ./deploy/k8s/helm/dapr-demo/
+   ```
+2. Build Images
+   ```shell
+   VERSION=$(date +"%s")
+   docker build --tag daprdemo/usergroups-api:latest --tag daprdemo/usergroups-api:${VERSION} --file Services/UserGroups.Api/Dockerfile .
+   ```
+3. Deploy Service
+   ```shell
+   helm upgrade --install dapr-demo ./deploy/k8s/helm/dapr-demo/ \
+     --namespace dapr-demo --create-namespace \
+     --wait --timeout=240s
+   ```
 
+### Removing the application
+
+1. Uninstall Helm Chart
+   ```shell
+   helm uninstall dapr-demo --namespace dapr-demo
+   ```
+2. Delete Namespace
+   ```shell
+   kubectl delete namespace/dapr-demo
+   ```
 
 ## Further Reading
 [OpenTelemetry Collector - Getting Started](https://opentelemetry.io/docs/collector/getting-started/)

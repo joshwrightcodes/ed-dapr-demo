@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    {{- include "daprdemo.labels" . | nindent 4 }}
+    app.kubernetes.io/service: {{ include "daprdemo.usergroups.api.name" . }}
+    app.kubernetes.io/component: {{ include "daprdemo.usergroups.api.name" . }}
+  name: {{ include "daprdemo.usergroups.api.name" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  ports:
+    {{- if .Values.userGroups.api.service.enableHttp }}
+    - name: http
+      port: {{ .Values.userGroups.api.service.ports.http }}
+      protocol: TCP
+      targetPort: {{ .Values.userGroups.api.service.targetPorts.http }}
+      appProtocol: http
+    {{- end }}
+    {{- if .Values.userGroups.api.service.enableHttps }}
+    - name: https
+      port: {{ .Values.userGroups.api.service.ports.https }}
+      protocol: TCP
+      targetPort: {{ .Values.userGroups.api.service.targetPorts.https }}
+      appProtocol: https
+    {{- end }}
+  selector:
+    {{- include "daprdemo.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/service: {{ include "daprdemo.usergroups.api.name" . }}
+    app.kubernetes.io/component: {{ include "daprdemo.usergroups.api.name" . }}
