@@ -61,15 +61,11 @@ All commands are from the root directory.
     --values deploy/k8s/helm/dependencies/values/cert-manager.values.yaml \
     --wait --timeout=120s
    ```
-2. Deploy Self-Signed Cluster Issuer
-   ```shell
-   kubectl apply deploy/k8s/helm/dependencies/bootstrap/cert-manager-clusterissuer.yaml
-   ```
-3. Install Dapr Cli (if required)
+2. Install Dapr Cli (if required)
    ```shell
    brew install dapr
    ```
-4. Install Dapr in Kubernetes (if required)
+3. Install Dapr in Kubernetes (if required)
    ```shell
    helm upgrade \
     --install dapr dapr \
@@ -78,7 +74,7 @@ All commands are from the root directory.
     --values deploy/k8s/helm/dependencies/values/dapr.values.yaml \
     --wait --timeout=120s
    ```
-5. Install NGINX Ingress Controller in Kubernetes (if required)  
+4. Install NGINX Ingress Controller in Kubernetes (if required)  
    _Minikube:_
    ```shell
    minikube addons enable ingress
@@ -92,7 +88,7 @@ All commands are from the root directory.
     --values deploy/k8s/helm/dependencies/values/ingress-nginx.values.yaml \
     --wait --timeout=5m
    ```
-6. Install OpenTelemetry Operator in Kubernetes (if required)
+5. Install OpenTelemetry Operator in Kubernetes (if required)
    ```shell
    helm upgrade --install opentelemetry-operator opentelemetry-operator \
     --repo https://open-telemetry.github.io/opentelemetry-helm-charts \
@@ -103,23 +99,9 @@ All commands are from the root directory.
 
 ### Running the application
 
-1. Grab Helm Dependencies (First Time)
+1. Run Deploy Script
    ```shell
-   helm dependency update ./deploy/k8s/helm/dapr-demo/
-   helm dependency build ./deploy/k8s/helm/dapr-demo/
-   ```
-2. Build Images
-   ```shell
-   VERSION=$(date +"%s")
-   echo version: ${VERSION}
-   docker build --tag daprdemo/usergroups-api:latest --tag daprdemo/usergroups-api:${VERSION} --file services/UserGroups.Api/Dockerfile .
-   docker build --tag daprdemo/users-api:latest --tag daprdemo/users-api:${VERSION} --file services/Users.Api/Dockerfile .
-   ```
-3. Deploy Service
-   ```shell
-   helm upgrade --install dapr-demo ./deploy/k8s/helm/dapr-demo/ \
-     --namespace dapr-demo --create-namespace \
-     --wait --timeout=240s
+   ./deploy.sh
    ```
 
 ### Removing the application

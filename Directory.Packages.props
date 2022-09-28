@@ -2,6 +2,9 @@
     <ItemGroup>
         <PackageVersion Include="AutoMapper" Version="11.0.1"/>
         <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0"/>
+        <PackageVersion Include="Dapr.AspNetCore" Version="1.8.0"/>
+        <PackageVersion Include="Dapr.Actors.AspNetCore" Version="1.8.0"/>
+        <PackageVersion Include="Dapr.Extensions.Configuration" Version="1.8.0"/>
         <PackageVersion Include="FluentValidation.AspNetCore" Version="11.1.2"/>
         <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.1.0"/>
         <PackageVersion Include="JsonPatch.Net" Version="2.0.2"/>

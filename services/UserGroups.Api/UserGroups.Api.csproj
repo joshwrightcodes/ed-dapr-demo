@@ -6,6 +6,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Dapr.AspNetCore" />
+        <PackageReference Include="Dapr.Actors.AspNetCore" />
+        <PackageReference Include="Dapr.Extensions.Configuration" />
         <PackageReference Include="OpenTelemetry" />
         <PackageReference Include="OpenTelemetry.Api" />
         <PackageReference Include="OpenTelemetry.Exporter.Console" />
@@ -20,7 +23,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\shared\BasePathFilter\BasePathFilter.csproj" />
+        <ProjectReference Include="..\..\shared\BasePathFilter\BasePathFilter.csproj" />
     </ItemGroup>
 
 </Project>

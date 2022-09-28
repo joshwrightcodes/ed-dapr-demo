@@ -7,20 +7,22 @@
 
 using System.Diagnostics;
 using System.Reflection;
-using BasePathFilter;
-using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.OpenApi.Models;
-using OpenTelemetry;
+using DaprDemo.Shared.BasePathFilter;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
-const string serviceName = "EdDemo.Dapr.UsersApi";
-const string assemblyVersion = "1.0.0";
+const string envVarPrefix = "DAPRDEMO_";
+const string envVarVersion = "DOTNET_APP_VERSION";
+var serviceName = Assembly.GetExecutingAssembly().GetName().Name!;
+var serviceVersion = Environment.GetEnvironmentVariable(envVarVersion) // Passed in this way due to issue with `dotnet build`
+	?? Assembly.GetExecutingAssembly().GetName().Version?.ToString();
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddEnvironmentVariables(envVarPrefix);
 
 builder.Services.AddBasePathMiddleware(builder.Configuration);
 
@@ -29,7 +31,7 @@ var configureResource = ResourceBuilder
 	.CreateDefault()
 	.AddService(
 		serviceName: serviceName,
-		serviceVersion: assemblyVersion,
+		serviceVersion: serviceVersion,
 		serviceInstanceId: Environment.MachineName);
 
 builder.Services.AddOpenTelemetryTracing(options =>
@@ -78,12 +80,17 @@ var mySource = new ActivitySource(serviceName);
 app.MapGet("/hello", () =>
 {
 	// Track work inside of the request
-	using var activity = mySource.StartActivity("SayHello");
+	using var activity = mySource.StartActivity();
 	activity?.SetTag("foo", 1);
 	activity?.SetTag("bar", "Hello, World!");
-	activity?.SetTag("baz", new int[] { 1, 2, 3 });
+	activity?.SetTag("baz", new[] { 1, 2, 3 });
 
-	return "Hello, World!";
+	return $"Hello from {serviceName}!";
+});
+
+app.MapGet("/version", () => new Dictionary<string, string?>
+{
+	["AssemblyInformationalVersion"] = Environment.GetEnvironmentVariable(envVarVersion),
 });
 
 // Configure the HTTP request pipeline.
@@ -99,10 +106,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseForwardedHeaders(new ForwardedHeadersOptions
-{
-	ForwardedHeaders = ForwardedHeaders.All,
-});
+app.UseForwardedHeaders();
 
 // Enable Health Checks
 app.UseHealthChecks("/health");

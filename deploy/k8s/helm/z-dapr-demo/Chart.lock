@@ -5,11 +5,14 @@ dependencies:
 - name: mailhog
   repository: https://codecentric.github.io/helm-charts
   version: 5.2.0
+- name: courses-api
+  repository: file://../courses-api/
+  version: 0.1.0
 - name: usergroups-api
   repository: file://../usergroups-api/
   version: 0.1.0
 - name: users-api
   repository: file://../users-api/
   version: 0.1.0
-digest: sha256:ec5a37364e9ed755f2d31efc340b45488e4fafae7cb55c2bf2e4cee5a0a9106c
-generated: "2022-09-27T15:34:13.733684+10:00"
+digest: sha256:d16b6a5e4f80b6091ce2259aa797d9977595028951f3281ca8c2d774ae27a652
+generated: "2022-09-28T14:03:11.15538+10:00"

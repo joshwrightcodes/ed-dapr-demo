@@ -6,11 +6,28 @@
 global:
   commonLabels: {}
   part_of: "dapr-demo"
-    
+
+courses-api:
+  extraEnv:
+    - name: ASPNETCORE_ENVIRONMENT
+      value: Development
+    - name: DAPRDEMO_BasePathOptions__ApplicationBasePath
+      value: /courses
+  ingress:
+    hosts:
+      - host: localhost
+        paths:
+          - path: /courses(/|$)(.*)
+            pathType: Prefix
+  openTelemetry:
+    enableSideCar: true
+  
 usergroups-api:
   extraEnv:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
+    - name: DAPRDEMO_BasePathOptions__ApplicationBasePath
+      value: /usergroups
   ingress:
     hosts:
       - host: localhost
@@ -24,6 +41,8 @@ users-api:
   extraEnv:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
+    - name: DAPRDEMO_BasePathOptions__ApplicationBasePath
+      value: /users
   ingress:
     hosts:
       - host: localhost

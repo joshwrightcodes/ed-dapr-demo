@@ -1,4 +1,4 @@
-# Default values for usergroups-api.
+# Default values for users-api.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
@@ -10,7 +10,7 @@ global:
 replicaCount: 1
 
 image:
-  repository: daprdemo/usergroups.api
+  repository: daprdemo/courses.api
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: ""
@@ -58,12 +58,9 @@ ingress:
   hosts:
     - host: localhost
       paths:
-        - path: /usergroups(/|$)(.*)
+        - path: /courses(/|$)(.*)
           pathType: Prefix
   tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -100,7 +97,7 @@ dapr:
       endpoint: "http://localhost:9411/api/v2/spans"
   
 openTelemetry:
-  enableSideCar: false
+  enableSideCar: true
   
 containerPorts:
   http: 80
