@@ -1,2 +1,6 @@
 # https://artifacthub.io/packages/helm/cert-manager/cert-manager
 installCRDs: true
+ingressShim:
+  defaultIssuerName: selfsigned-cluster-issuer
+  defaultIssuerKind: ClusterIssuer
+  defaultIssuerGroup: cert-manager.io

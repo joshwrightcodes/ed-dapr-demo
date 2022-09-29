@@ -2,6 +2,9 @@ dependencies:
 - name: opentelemetry-collector
   repository: https://open-telemetry.github.io/opentelemetry-helm-charts
   version: 0.31.2
+- name: kafka
+  repository: https://charts.bitnami.com/bitnami
+  version: 18.4.3
 - name: mailhog
   repository: https://codecentric.github.io/helm-charts
   version: 5.2.0
@@ -14,5 +17,5 @@ dependencies:
 - name: users-api
   repository: file://../users-api/
   version: 0.1.0
-digest: sha256:d16b6a5e4f80b6091ce2259aa797d9977595028951f3281ca8c2d774ae27a652
-generated: "2022-09-28T14:03:11.15538+10:00"
+digest: sha256:a28ab7bf53d4abe000536f2c12cc95e108e2bdf54d9b5ea58c448ef10ad8805f
+generated: "2022-09-28T17:07:25.252488+10:00"

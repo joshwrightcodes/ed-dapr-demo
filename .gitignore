@@ -1,5 +1,4 @@
-**/helm/**/charts
-**/helm/charts
+**/helm/charts/**/charts
 .DS_Store
 bin/
 obj/
