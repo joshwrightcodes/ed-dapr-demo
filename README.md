@@ -52,52 +52,7 @@ This project has the following requirements that need to be installed prior to r
 
 All commands are from the root directory.
 
-
-
-1. Install Certificate Manager in Kubernetes (if required)
-   ```shell
-   helm upgrade \
-    --install cert-manager cert-manager \
-    --repo https://charts.jetstack.io \
-    --namespace cert-manager --create-namespace \
-    --values deploy/k8s/helm/dependencies/values/cert-manager.values.yaml \
-    --wait --timeout=120s
-   ```
-2. Install Dapr Cli (if required)
-   ```shell
-   brew install dapr
-   ```
-3. Install Dapr in Kubernetes (if required)
-   ```shell
-   helm upgrade \
-    --install dapr dapr \
-    --repo https://dapr.github.io/helm-charts/ \
-    --namespace dapr-system --create-namespace \
-    --values deploy/k8s/helm/dependencies/values/dapr.values.yaml \
-    --wait --timeout=120s
-   ```
-4. Install NGINX Ingress Controller in Kubernetes (if required)  
-   _Minikube:_
-   ```shell
-   minikube addons enable ingress
-   ```
-   _Others_
-   ```shell
-   helm upgrade \
-    --install ingress-nginx ingress-nginx \
-    --repo https://kubernetes.github.io/ingress-nginx \
-    --namespace ingress-nginx --create-namespace \
-    --values deploy/k8s/helm/dependencies/values/ingress-nginx.values.yaml \
-    --wait --timeout=5m
-   ```
-5. Install OpenTelemetry Operator in Kubernetes (if required)
-   ```shell
-   helm upgrade --install opentelemetry-operator opentelemetry-operator \
-    --repo https://open-telemetry.github.io/opentelemetry-helm-charts \
-    --namespace opentelemetry-operator-system --create-namespace \
-    --values deploy/k8s/helm/dependencies/values/opentelemetry-operator.values.yaml \
-    --wait --timeout=5m
-   ```
+1. Run `install.sh` - this will install all your first run requirements in Kubernetes
 
 ### Running the application
 
