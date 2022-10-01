@@ -6,8 +6,13 @@
 // ---------------------------------------------------------------------------------------------------------------------
 
 using System.Diagnostics;
+using System.Net.NetworkInformation;
 using System.Reflection;
+using Dapr.Client;
+using Dapr.Extensions.Configuration;
 using DaprDemo.Shared.BasePathFilter;
+using DaprDemo.Users.Api;
+using Microsoft.AspNetCore.Mvc;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -16,82 +21,38 @@ using OpenTelemetry.Trace;
 
 const string envVarPrefix = "DAPRDEMO_";
 const string envVarVersion = "DOTNET_APP_VERSION";
-var serviceName = Assembly.GetExecutingAssembly().GetName().Name!;
-var serviceVersion = Environment.GetEnvironmentVariable(envVarVersion) // Passed in this way due to issue with `dotnet build`
-	?? Assembly.GetExecutingAssembly().GetName().Version?.ToString();
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddEnvironmentVariables(envVarPrefix);
+builder.Configuration
+	.AddEnvironmentVariables(envVarPrefix);
 
 builder.Services.AddBasePathMiddleware(builder.Configuration);
-
-// Open Telemetry
-var configureResource = ResourceBuilder
-	.CreateDefault()
-	.AddService(
-		serviceName: serviceName,
-		serviceVersion: serviceVersion,
-		serviceInstanceId: Environment.MachineName);
-
-builder.Services.AddOpenTelemetryTracing(options =>
-{
-	options.SetResourceBuilder(configureResource)
-		.AddSource(serviceName)
-		.SetSampler(new AlwaysOnSampler())
-		.AddHttpClientInstrumentation()
-		.AddAspNetCoreInstrumentation()
-		.AddOtlpExporter(opt => opt.Protocol = OtlpExportProtocol.Grpc)
-		.AddConsoleExporter();
-});
-
-builder.Logging.AddOpenTelemetry(options =>
-{
-	options
-		.SetResourceBuilder(configureResource)
-		.SetIncludeScopes(true)
-		.SetIncludeFormattedMessage(true)
-		.AddOtlpExporter(opt => opt.Protocol = OtlpExportProtocol.Grpc)
-		.AddConsoleExporter();
-});
-
-builder.Services.AddOpenTelemetryMetrics(options =>
-{
-	options.SetResourceBuilder(configureResource)
-		.AddRuntimeInstrumentation()
-		.AddHttpClientInstrumentation()
-		.AddAspNetCoreInstrumentation()
-		.AddOtlpExporter(opt => opt.Protocol = OtlpExportProtocol.Grpc)
-		.AddConsoleExporter();
-});
-
+builder.AddOpenTelemetry();
 builder.Services.AddHealthChecks();
-
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
+builder.Services.AddSingleton<IConfigurationRoot>(builder.Configuration); // Bad, for demo purposes only
 var app = builder.Build();
 
-var mySource = new ActivitySource(serviceName);
-
-app.MapGet("/hello", () =>
+app.MapGet("/hello", ([FromServices] ILogger<Program> logger) =>
 {
 	// Track work inside of the request
-	using var activity = mySource.StartActivity();
-	activity?.SetTag("foo", 1);
-	activity?.SetTag("bar", "Hello, World!");
-	activity?.SetTag("baz", new[] { 1, 2, 3 });
-
-	return $"Hello from {serviceName}!";
+	logger.LogInformation("Saying Hello");
+	return $"Hello from {Assembly.GetExecutingAssembly().GetName().Name!}!";
 });
 
-app.MapGet("/version", () => new Dictionary<string, string?>
-{
-	["AssemblyInformationalVersion"] = Environment.GetEnvironmentVariable(envVarVersion),
-});
+app.MapGet("/version", ()
+	=> new Dictionary<string, string?>
+	{
+		["AssemblyInformationalVersion"] = Environment.GetEnvironmentVariable(envVarVersion),
+	});
+
+app.MapGet("/config", ([FromServices] IConfigurationRoot configurationRoot)
+	=> configurationRoot.GetDebugView());
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

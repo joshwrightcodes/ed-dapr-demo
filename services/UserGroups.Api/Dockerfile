@@ -1,16 +1,9 @@
-﻿ARG VERSION
-ARG VERSION_SUFFIX
-ARG ASSEMBLY_INFO_VERSION
-
-FROM mcr.microsoft.com/dotnet/aspnet:6.0-alpine AS base
+﻿FROM mcr.microsoft.com/dotnet/aspnet:6.0-alpine AS base
 RUN apk update && apk upgrade
 WORKDIR /app
 EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine AS build
-ARG VERSION
-ARG VERSION_SUFFIX
-ARG ASSEMBLY_INFO_VERSION
 RUN apk update && apk upgrade
 WORKDIR /src
 COPY ["services/UserGroups.Api/UserGroups.Api.csproj", "services/UserGroups.Api/"]
@@ -28,8 +21,6 @@ FROM build AS publish
 RUN dotnet publish "UserGroups.Api.csproj" -c Release -o /app/publish
 
 FROM base AS final
-ARG ASSEMBLY_INFO_VERSION
 WORKDIR /app
-ENV DOTNET_APP_VERSION=${ASSEMBLY_INFO_VERSION}
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "UserGroups.Api.dll"]

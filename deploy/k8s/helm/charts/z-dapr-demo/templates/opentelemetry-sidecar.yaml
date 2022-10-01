@@ -37,7 +37,7 @@ spec:
         timeout: 30s
     exporters:
       otlp:
-        endpoint: {{ include "opentelemetry-collector.fullname" . | trim -}}:4317
+        endpoint: dapr-demo-opentelemetry-collector:4317
         tls:
           insecure: true
     service:

@@ -1,0 +1,27 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: {{ include "users-api.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "users-api.labels" . | nindent 4 }}
+spec:
+  type: bindings.smtp
+  version: v1
+  metadata:
+  - name: host
+    value: mail
+  - name: port
+    value: 25
+  - name: user
+    secretKeyRef:
+      name: {{ include "users-api.fullname" . }}
+      key: SmtpUser
+  - name: password
+    secretKeyRef:
+      name: {{ include "users-api.fullname" . }}
+      key: SmtpPassword
+  - name: skipTLSVerify
+    value: true
+auth:
+  secretStore: {{ include "users-api.fullname" . }}

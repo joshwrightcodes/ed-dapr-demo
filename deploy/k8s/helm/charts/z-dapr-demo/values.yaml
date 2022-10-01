@@ -41,9 +41,11 @@ users-api:
   extraEnv:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
-    - name: DAPRDEMO_BasePathOptions__ApplicationBasePath
-      value: /users
+    - name: DAPRDEMO_BasePath
+      value: users
   ingress:
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
     hosts:
       - host: localhost
         paths:
@@ -73,10 +75,12 @@ mailhog:
     
 opentelemetry-collector:
   mode: deployment
-  presets: 
-    logsCollection:
-      enabled: true
-      includeCollectorLogs: true
+  extraEnvs:
+  - name: HOST_IP
+    valueFrom:
+      fieldRef:
+        apiVersion: v1
+        fieldPath: status.hostIP
   config:
     receivers:
       otlp:
@@ -84,10 +88,10 @@ opentelemetry-collector:
           grpc:
           http:
     exporters:
-#      otel/elastic:
-#        endpoint: ${MY_POD_IP}:8200
-#        tls:
-#          insecure: true
+      otlp:
+        endpoint: ${HOST_IP}:8200
+        tls:
+          insecure: true
       logging:
         logLevel: debug
     processors:
@@ -106,13 +110,13 @@ opentelemetry-collector:
       pipelines:
         traces:
           receivers: [ otlp ]
-          processors: [ batch ]
-          exporters: [ logging ]
+          processors: [ memory_limiter, batch ]
+          exporters: [ otlp ]
         metrics:
           receivers: [ otlp ]
-          processors: [ batch ]
-          exporters: [ logging ]
+          processors: [ memory_limiter, batch ]
+          exporters: [ otlp ]
         logs:
           receivers: [ otlp ]
-          processors: [ batch ]
-          exporters: [ logging ]
+          processors: [ memory_limiter, batch ]
+          exporters: [ otlp ]
