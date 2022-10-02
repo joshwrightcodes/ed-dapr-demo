@@ -19,17 +19,17 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
-const string envVarPrefix = "DAPRDEMO_";
-const string envVarVersion = "DOTNET_APP_VERSION";
+const string envVarPrefix = "APP_";
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration
-	.AddEnvironmentVariables(envVarPrefix);
+builder.Configuration.AddEnvironmentVariables(envVarPrefix);
 
 builder.Services.AddBasePathMiddleware(builder.Configuration);
 builder.AddOpenTelemetry();
-builder.Services.AddHealthChecks();
+builder.AddDapr();
+builder.AddHealthChecks();
+
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -45,14 +45,39 @@ app.MapGet("/hello", ([FromServices] ILogger<Program> logger) =>
 	return $"Hello from {Assembly.GetExecutingAssembly().GetName().Name!}!";
 });
 
-app.MapGet("/version", ()
+app.MapGet("/version", ([FromServices] IConfigurationRoot config)
 	=> new Dictionary<string, string?>
 	{
-		["AssemblyInformationalVersion"] = Environment.GetEnvironmentVariable(envVarVersion),
+		["AssemblyInformationalVersion"] = config.GetValue<string>("VERSION"),
 	});
 
 app.MapGet("/config", ([FromServices] IConfigurationRoot configurationRoot)
 	=> configurationRoot.GetDebugView());
+
+app.MapGet(
+	"mail/send",
+	(
+		[FromQuery] string email,
+		[FromQuery] string name,
+		[FromServices] DaprClient daprClient,
+		[FromServices] ILogger<Program> logger,
+		CancellationToken cancellationToken) =>
+	{
+		const string sendMailBinding = "sendmail";
+
+		logger.LogInformation("Sending email to {EmailAddress}", email);
+		return daprClient.InvokeBindingAsync(
+			"dapr-demo-users-api-sendmail",
+			"create",
+			$"<html><body><p>Hello <b>{name}</b>!</p></body><html>",
+			new Dictionary<string, string>
+			{
+				["emailFrom"] = "sample@wright.codes",
+				["emailTo"] = email,
+				["subject"] = $"Hello <b>{name}</b>!",
+			},
+			cancellationToken);
+	});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

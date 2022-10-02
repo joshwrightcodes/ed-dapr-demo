@@ -65,8 +65,12 @@ spec:
               value: {{ include "users-api.fullname" . }}
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: "service.version={{ .Chart.AppVersion }},service.instance.id=$(POD_NAME),service.namespace=$(POD_NAMESPACE)"
-            - name: DOTNET_APP_VERSION
+            - name: APP_VERSION
               value: {{ .Chart.AppVersion }}
+            - name: APP_DaprOptions__SecretStore
+              value: {{ include "users-api.fullname" . }}-secrets
+            - name: APP_DaprOptions__SecretDescriptors__0
+              value: {{ include "users-api.fullname" . }}-mailserver
             {{- with .Values.extraEnvs }}
             {{- . | toYaml | nindent 6 }}
             {{- end }}

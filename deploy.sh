@@ -48,7 +48,7 @@ say "Deploying Main Application To K8s"
 
 helm upgrade --install dapr-demo ${CHARTS_DIR}/z-dapr-demo/ \
   --namespace dapr-demo --create-namespace \
-  --wait --timeout=240s
+  --wait --timeout=30s --debug
   
 say "Deployed ${APP_NAME}"
 say "Completed in:"

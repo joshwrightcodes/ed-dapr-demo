@@ -41,8 +41,10 @@ users-api:
   extraEnv:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
-    - name: DAPRDEMO_BasePath
+    - name: APP_BasePath
       value: users
+    - name: OTEL_PROPAGATORS
+      values: "tracecontext,baggage,b3,b3multi,jaeger"
   ingress:
     annotations:
       nginx.ingress.kubernetes.io/rewrite-target: /$2

@@ -24,6 +24,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\..\shared\BasePathFilter\BasePathFilter.csproj" />
+        <ProjectReference Include="..\..\shared\HealthChecks.Dapr\HealthChecks.Dapr.csproj" />
     </ItemGroup>
 
 </Project>

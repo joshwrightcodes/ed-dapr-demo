@@ -16,6 +16,7 @@ spec:
           grpc:
           http:
       zipkin:
+        endpoint: 0.0.0.0:9411
       prometheus:
         config:
           scrape_configs:
@@ -23,6 +24,12 @@ spec:
               scrape_interval: 5s
               static_configs:
                 - targets: ["localhost:9090"]
+    extensions:
+      health_check:
+      pprof:
+        endpoint: :1888
+      zpages:
+        endpoint: :55679
     processors:
       memory_limiter:
         check_interval: 5s
@@ -41,6 +48,7 @@ spec:
         tls:
           insecure: true
     service:
+      extensions: [pprof, zpages, health_check]
       pipelines:
         traces:
           receivers: [ otlp,zipkin ]

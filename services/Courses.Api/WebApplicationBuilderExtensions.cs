@@ -7,6 +7,8 @@
 
 namespace DaprDemo.UserGroups.Api;
 
+using DaprDemo.Shared.HealthChecks.DaprHealth;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
@@ -36,9 +38,10 @@ public static class WebApplicationBuilderExtensions
 		{
 			options
 				.SetResourceBuilder(configureResource)
-				.SetIncludeScopes(true)
-				.SetIncludeFormattedMessage(true)
 				.AddOtlpExporter(opt => opt.Protocol = OtlpExportProtocol.Grpc);
+
+			options.IncludeScopes = true;
+			options.IncludeFormattedMessage = true;
 		});
 
 		builder.Services.AddOpenTelemetryMetrics(options =>
@@ -49,6 +52,15 @@ public static class WebApplicationBuilderExtensions
 				.AddAspNetCoreInstrumentation()
 				.AddOtlpExporter(opt => opt.Protocol = OtlpExportProtocol.Grpc);
 		});
+
+		return builder;
+	}
+
+	public static WebApplicationBuilder AddHealthChecks(this WebApplicationBuilder builder)
+	{
+		builder.Services.AddHealthChecks()
+			.AddCheck("self", () => HealthCheckResult.Healthy())
+			.AddDapr();
 
 		return builder;
 	}

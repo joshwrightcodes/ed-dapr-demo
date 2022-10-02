@@ -72,7 +72,7 @@ Create Dapr annotations
 {{- if .Values.dapr -}}
 dapr.io/enabled: {{ .Values.dapr.enable | quote }}
 {{ if .Values.dapr.enable -}}
-dapr.io/app-id: {{ include "users-api.name" . | quote }}
+dapr.io/app-id: {{ include "users-api.fullname" . }}-dapr
 dapr.io/config: {{ include "users-api.fullname" . }}
 dapr.io/log-as-json: {{ default "true" .Values.dapr.logAsJson | quote }}
 dapr.io/app-port: {{ default 80 .Values.dapr.appPort | quote }}

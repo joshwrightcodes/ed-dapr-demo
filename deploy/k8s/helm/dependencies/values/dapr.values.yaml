@@ -7,3 +7,4 @@ global:
     enabled: true
     port: 9090             
   daprControlPlainArch: arm64
+  disable-builtin-k8s-secret-store: true

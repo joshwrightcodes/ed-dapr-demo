@@ -36,9 +36,10 @@ public static class WebApplicationBuilderExtensions
 		{
 			options
 				.SetResourceBuilder(configureResource)
-				.SetIncludeScopes(true)
-				.SetIncludeFormattedMessage(true)
 				.AddOtlpExporter(opt => opt.Protocol = OtlpExportProtocol.Grpc);
+
+			options.IncludeScopes = true;
+			options.IncludeFormattedMessage = true;
 		});
 
 		builder.Services.AddOpenTelemetryMetrics(options =>

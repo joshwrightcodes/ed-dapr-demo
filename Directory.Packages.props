@@ -4,6 +4,7 @@
         <PackageVersion Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0"/>
         <PackageVersion Include="Dapr.AspNetCore" Version="1.8.0"/>
         <PackageVersion Include="Dapr.Actors.AspNetCore" Version="1.8.0"/>
+        <PackageVersion Include="Dapr.Client" Version="1.8.0" />
         <PackageVersion Include="Dapr.Extensions.Configuration" Version="1.8.0"/>
         <PackageVersion Include="FluentValidation.AspNetCore" Version="11.1.2"/>
         <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="11.1.0"/>
@@ -24,28 +25,30 @@
         <PackageVersion Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0"/>
         <packageVersion Include="Microsoft.Extensions.Configuration" Version="6.0.0"/>
         <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0"/>
+        <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="6.0.9" />
+        <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" Version="6.0.9" />
         <PackageVersion Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="6.0.6"/>
         <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="6.0.0"/>
         <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.1"/>
         <PackageVersion Include="Microsoft.Extensions.Hosting" Version="6.0.1"/>
         <PackageVersion Include="Npgsql" Version="6.0.5"/>
         <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="6.0.5"/>
-        <PackageVersion Include="OpenTelemetry" Version="1.4.0-alpha.2"/>
-        <PackageVersion Include="OpenTelemetry.Api" Version="1.4.0-alpha.2"/>
-        <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc9.6"/>
-        <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.4.0-alpha.2"/>
-        <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.4.0-alpha.2"/>
-        <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol.Logs" Version="1.4.0-alpha.2"/>
-        <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc9.6"/>
+        <PackageVersion Include="OpenTelemetry" Version="1.4.0-beta.1"/>
+        <PackageVersion Include="OpenTelemetry.Api" Version="1.4.0-beta.1"/>
+        <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.0.0-rc9.7"/>
+        <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.4.0-beta.1"/>
+        <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.4.0-beta.1"/>
+        <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol.Logs" Version="1.4.0-beta.1"/>
+        <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.0.0-rc9.7"/>
         <PackageVersion Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.0.0-beta.3"/>
-        <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc9.6"/>
+        <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc9.7"/>
         <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="1.0.0"/>
         <PackageVersion Include="Roslynator.Analyzers" Version="4.1.1"/>
         <PackageVersion Include="Roslynator.Formatting.Analyzers" Version="4.1.1"/>
         <PackageVersion Include="Serilog.AspNetCore" Version="2.11.0"/>
         <PackageVersion Include="Serilog.Settings.Configuration" Version="3.3.0"/>
         <PackageVersion Include="Serilog.Sinks.Console" Version="4.0.1"/>
-        <PackageVersion Include="SonarAnalyzer.CSharp" Version="8.44.0.52574"/>
+        <PackageVersion Include="SonarAnalyzer.CSharp" Version="8.45.0.54064"/>
         <PackageVersion Include="StyleCop.Analyzers" Version="1.2.0-beta.435"/>
         <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
         <PackageVersion Include="Swashbuckle.AspNetCore.Filters" Version="7.0.3"/>

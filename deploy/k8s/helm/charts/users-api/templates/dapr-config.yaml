@@ -6,12 +6,20 @@ metadata:
   labels:
     {{- include "users-api.labels" . | nindent 4 }}
 spec:
+  mtls:
+    enabled: true
+  metric:
+    enabled: true
+  secrets:
+    scopes:
+      - storeName: {{ include "users-api.fullname" . }}-mailserver
+        defaultAccess: allow
   {{ if .Values.dapr -}}
   {{ with .Values.dapr -}}
   {{ if .tracing -}}
   tracing:
     samplingRate: {{ default 1 .tracing.samplingRate | int | quote }}
-    {{ if .tracing.zipkin -}}
+    {{ if .tracing.zipkin.endpoint -}}
     zipkin:
       endpointAddress: {{ .tracing.zipkin.endpoint | quote }}
     {{- end -}}
