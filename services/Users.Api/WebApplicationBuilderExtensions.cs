@@ -5,9 +5,6 @@
 // </copyright>
 // ---------------------------------------------------------------------------------------------------------------------
 
-using Grpc.Net.Client;
-using Grpc.Net.Client.Configuration;
-
 namespace DaprDemo.Users.Api;
 
 using Dapr.Client;
@@ -92,17 +89,11 @@ public static class WebApplicationBuilderExtensions
 
 	public static WebApplicationBuilder AddDapr(this WebApplicationBuilder builder)
 	{
-		builder.Services.AddDaprClient(configure =>
-		{
-			configure.UseGrpcChannelOptions(new GrpcChannelOptions
-			{
-				HttpHandler = new 
-			})
-		});
+		builder.Services.AddDaprClient();
 
 		var options = builder.Configuration.GetSection(nameof(DaprOptions)).Get<DaprOptions>();
 
-		if (!string.IsNullOrWhiteSpace(options.SecretStore))
+		if (options is not null && !string.IsNullOrWhiteSpace(options.SecretStore))
 		{
 			builder.Configuration.AddDaprSecretStore(
 				options.SecretStore,

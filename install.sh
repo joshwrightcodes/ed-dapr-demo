@@ -6,34 +6,41 @@ say "Install Dependencies for ${APP_NAME}"
 
 ##### DECLARE DEPENDENCIES HERE
 declare -A dependency0=(
+  [Name]="Metrics Server"
+  [Chart]="metrics-server"
+  [Namespace]="metrics-server-system"
+  [Repo]="https://kubernetes-sigs.github.io/metrics-server/"
+)
+
+declare -A dependency1=(
   [Name]="Metal Load Balancer"
   [Chart]="metallb"
   [Namespace]="metallb-system"
   [Repo]="https://metallb.github.io/metallb"
 )
 
-declare -A dependency1=(
+declare -A dependency2=(
   [Name]="Certificate Manager"
   [Chart]="cert-manager"
-  [Namespace]="cert-manager"
+  [Namespace]="cert-manager-system"
   [Repo]="https://charts.jetstack.io"
 )
 
-declare -A dependency2=(
+declare -A dependency3=(
   [Name]="Dapr"
   [Chart]="dapr"
   [Namespace]="dapr-system"
   [Repo]="https://dapr.github.io/helm-charts"
 )
   
-declare -A dependency3=(
+declare -A dependency4=(
   [Name]="NGINX Ingress"
   [Chart]="ingress-nginx"
-  [Namespace]="ingress-nginx"
+  [Namespace]="ingress-nginx-system"
   [Repo]="https://kubernetes.github.io/ingress-nginx"
 )
   
-declare -A dependency4=(
+declare -A dependency5=(
   [Name]="OpenTelemetry Operator"
   [Chart]="opentelemetry-operator"
   [Namespace]="opentelemetry-operator-system"

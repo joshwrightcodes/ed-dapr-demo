@@ -5,19 +5,12 @@
 // </copyright>
 // ---------------------------------------------------------------------------------------------------------------------
 
-using System.Diagnostics;
-using System.Net.NetworkInformation;
+using System.Net;
 using System.Reflection;
 using Dapr.Client;
-using Dapr.Extensions.Configuration;
 using DaprDemo.Shared.BasePathFilter;
 using DaprDemo.Users.Api;
 using Microsoft.AspNetCore.Mvc;
-using OpenTelemetry.Exporter;
-using OpenTelemetry.Logs;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
 
 const string envVarPrefix = "APP_";
 
@@ -45,20 +38,21 @@ app.MapGet("/hello", ([FromServices] ILogger<Program> logger) =>
 	return $"Hello from {Assembly.GetExecutingAssembly().GetName().Name!}!";
 });
 
-app.MapGet("/version", ([FromServices] IConfigurationRoot config)
+app.MapGet("/version", ([FromServices] IConfiguration configuration)
 	=> new Dictionary<string, string?>
 	{
-		["AssemblyInformationalVersion"] = config.GetValue<string>("VERSION"),
+		["AssemblyInformationalVersion"] = configuration.GetValue<string>("APP_VERSION"),
 	});
 
-app.MapGet("/config", ([FromServices] IConfigurationRoot configurationRoot)
-	=> configurationRoot.GetDebugView());
+app.MapGet("/config", ([FromServices] IConfiguration configuration)
+	=> configuration.AsEnumerable());
 
 app.MapGet(
 	"mail/send",
 	(
 		[FromQuery] string email,
 		[FromQuery] string name,
+		[FromServices] IConfiguration configuration,
 		[FromServices] DaprClient daprClient,
 		[FromServices] ILogger<Program> logger,
 		CancellationToken cancellationToken) =>
@@ -69,12 +63,12 @@ app.MapGet(
 		return daprClient.InvokeBindingAsync(
 			"dapr-demo-users-api-sendmail",
 			"create",
-			$"<html><body><p>Hello <b>{name}</b>!</p></body><html>",
+			$"<html><body><p>Hello <b>{name}</b>!</p><p>Email sent from service {Assembly.GetExecutingAssembly().GetName().Name!} ({configuration.GetValue<string>("APP_VERSION")}) on host {Dns.GetHostName()}.</p></body><html>",
 			new Dictionary<string, string>
 			{
-				["emailFrom"] = "sample@wright.codes",
+				["emailFrom"] = $"{Dns.GetHostName()}@daprdemo.wright.codes",
 				["emailTo"] = email,
-				["subject"] = $"Hello <b>{name}</b>!",
+				["subject"] = $"Hello {name}!",
 			},
 			cancellationToken);
 	});

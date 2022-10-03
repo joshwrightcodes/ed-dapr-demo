@@ -11,8 +11,10 @@ courses-api:
   extraEnv:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
-    - name: DAPRDEMO_BasePathOptions__ApplicationBasePath
+    - name: APP_BasePathOptions__ApplicationBasePath
       value: /courses
+    - name: OTEL_PROPAGATORS
+      values: "tracecontext,baggage,b3,b3multi,jaeger"
   ingress:
     hosts:
       - host: localhost
@@ -26,8 +28,10 @@ usergroups-api:
   extraEnv:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
-    - name: DAPRDEMO_BasePathOptions__ApplicationBasePath
+    - name: APP_BasePathOptions__ApplicationBasePath
       value: /usergroups
+    - name: OTEL_PROPAGATORS
+      values: "tracecontext,baggage,b3,b3multi,jaeger"
   ingress:
     hosts:
       - host: localhost
@@ -41,8 +45,8 @@ users-api:
   extraEnv:
     - name: ASPNETCORE_ENVIRONMENT
       value: Development
-    - name: APP_BasePath
-      value: users
+    - name: APP_BasePathOptions__ApplicationBasePath
+      value: /users
     - name: OTEL_PROPAGATORS
       values: "tracecontext,baggage,b3,b3multi,jaeger"
   ingress:

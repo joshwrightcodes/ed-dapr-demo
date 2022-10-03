@@ -24,9 +24,7 @@ for filename in ./services/*/Dockerfile; do
     --tag "${DOCKER_REPO}/${IMAGE_NAME}:latest" \
     --tag "${DOCKER_REPO}/${IMAGE_NAME}:${CHART_VERSION}.${VERSION_SUFFIX}" \
     --tag "${DOCKER_REPO}/${IMAGE_NAME}:${ASSEMBLY_INFO_VERSION}" \
-    --build-arg "VERSION=${CHART_VERSION}" \
-    --build-arg "VERSION_SUFFIX=${VERSION_SUFFIX}" \
-    --build-arg "ASSEMBLY_INFO_VERSION=${ASSEMBLY_INFO_VERSION}" \
+    --build-arg "APP_VERSION=${ASSEMBLY_INFO_VERSION}" \
     .
     say "Built Docker Image: ${DOCKER_REPO}/${IMAGE_NAME}:${ASSEMBLY_INFO_VERSION}"
 done

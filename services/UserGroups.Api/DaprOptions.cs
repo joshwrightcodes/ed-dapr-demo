@@ -5,7 +5,7 @@
 // </copyright>
 // ---------------------------------------------------------------------------------------------------------------------
 
-namespace DaprDemo.Users.Api;
+namespace DaprDemo.UserGroups.Api;
 
 public class DaprOptions
 {

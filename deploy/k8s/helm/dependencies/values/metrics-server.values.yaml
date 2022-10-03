@@ -1,0 +1,5 @@
+# https://github.com/kubernetes-sigs/metrics-server/tree/master/charts/metrics-server
+args:
+  - --cert-dir=/tmp
+  - --secure-port=4443
+  - --kubelet-insecure-tls # This is only being done for a local Docker Desktop cluster. 
