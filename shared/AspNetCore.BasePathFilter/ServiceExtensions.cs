@@ -5,7 +5,7 @@
 // </copyright>
 // ---------------------------------------------------------------------------------------------------------------------
 
-namespace DaprDemo.Shared.BasePathFilter;
+namespace DaprDemo.AspNetCore.BasePathFilter;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

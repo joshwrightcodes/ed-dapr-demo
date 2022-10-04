@@ -7,15 +7,19 @@
 
 namespace DaprDemo.Courses.Api;
 
-using Dapr.Client;
-using Dapr.Extensions.Configuration;
-using DaprDemo.Shared.HealthChecks.DaprHealth;
+using System.Reflection;
+using DaprDemo.AspNetCore.BasePathFilter;
+using DaprDemo.Dapr.Extension.Configuration;
+using DaprDemo.Dapr.Extension.HealthChecks;
+using DaprDemo.OpenApi.Extensions;
+using DaprDemo.OpenTelemetry.Extensions;
+using global::OpenTelemetry.Resources;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.Mvc.Versioning.Conventions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using OpenTelemetry.Exporter;
-using OpenTelemetry.Logs;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 
 public static class WebApplicationBuilderExtensions
 {
@@ -39,34 +43,8 @@ public static class WebApplicationBuilderExtensions
 		var configureResource = ResourceBuilder
 			.CreateDefault();
 
-		builder.Services.AddOpenTelemetryTracing(options =>
-		{
-			options.SetResourceBuilder(configureResource)
-				.AddSource()
-				.SetSampler(new AlwaysOnSampler())
-				.AddHttpClientInstrumentation()
-				.AddAspNetCoreInstrumentation()
-				.AddOtlpExporter(opt => opt.Protocol = OtlpExportProtocol.Grpc);
-		});
-
-		builder.Logging.AddOpenTelemetry(options =>
-		{
-			options
-				.SetResourceBuilder(configureResource)
-				.AddOtlpExporter(opt => opt.Protocol = OtlpExportProtocol.Grpc);
-
-			options.IncludeScopes = true;
-			options.IncludeFormattedMessage = true;
-		});
-
-		builder.Services.AddOpenTelemetryMetrics(options =>
-		{
-			options.SetResourceBuilder(configureResource)
-				.AddRuntimeInstrumentation()
-				.AddHttpClientInstrumentation()
-				.AddAspNetCoreInstrumentation()
-				.AddOtlpExporter(opt => opt.Protocol = OtlpExportProtocol.Grpc);
-		});
+		builder.Services.AddOpenTelemetryServices(configureResource);
+		builder.Logging.AddOpenTelemetryLogging(configureResource);
 
 		return builder;
 	}
@@ -89,17 +67,70 @@ public static class WebApplicationBuilderExtensions
 
 	public static WebApplicationBuilder AddDapr(this WebApplicationBuilder builder)
 	{
-		builder.Services.AddDaprClient();
+		builder.Services.AddDaprServices();
+		builder.Configuration.AddDaprConfiguration(builder.Services);
+		return builder;
+	}
 
-		var options = builder.Configuration.GetSection(nameof(DaprOptions)).Get<DaprOptions>();
+	public static WebApplicationBuilder AddBasePathMiddleware(this WebApplicationBuilder builder)
+	{
+		builder.Services.AddBasePathMiddleware(builder.Configuration);
+		return builder;
+	}
 
-		if (options is not null && !string.IsNullOrWhiteSpace(options.SecretStore))
-		{
-			builder.Configuration.AddDaprSecretStore(
-				options.SecretStore,
-				options.SecretDescriptors?.Select(sd => new DaprSecretDescriptor(sd)) ?? new List<DaprSecretDescriptor>(),
-				new DaprClientBuilder().Build());
-		}
+	public static WebApplicationBuilder AddApiVersioning(this WebApplicationBuilder builder)
+	{
+		builder.Services
+			.AddApiVersioning(options =>
+			{
+				options.ReportApiVersions = true;
+				options.ApiVersionReader = ApiVersionReader.Combine(
+					new MediaTypeApiVersionReader(), // Preferred Versioning
+					new QueryStringApiVersionReader()); // Add this one for the HATEOAS stuff to stop complaining
+				options.AssumeDefaultVersionWhenUnspecified = true;
+				options.DefaultApiVersion = new ApiVersion(1, 0);
+				options.Conventions.Add(new VersionByNamespaceConvention());
+			})
+			.AddVersionedApiExplorer(options =>
+			{
+				// add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
+				// note: the specified format code will format the version as "'v'major[.minor][-status]"
+				options.GroupNameFormat = "'v'VVV";
+
+				// note: this option is only necessary when versioning by url segment. the SubstitutionFormat
+				// can also be used to control the format of the API version in route templates
+				options.SubstituteApiVersionInUrl = true;
+			})
+			.AddEndpointsApiExplorer();
+
+		return builder;
+	}
+
+	public static WebApplicationBuilder AddOpenApi(this WebApplicationBuilder builder)
+	{
+		builder.Services
+			.AddSwaggerGen(options =>
+			{
+				// options.SwaggerDoc("v1", builder.Configuration.GetValue<OpenApiInfo>($"{Assembly.GetExecutingAssembly().GetName()}.v1"));
+
+				// string filePath = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
+				// options.IncludeXmlComments(filePath);
+
+				options.OperationFilter<ApiVersionFilter>();
+
+				// https://github.com/mattfrear/Swashbuckle.AspNetCore.Filters
+				options.OperationFilter<AddHeaderOperationFilter>(
+					"traceparent",
+					"HTTP header field identifies the incoming request in a tracing system",
+					false);
+				options.OperationFilter<AddHeaderOperationFilter>(
+					"tracestate",
+					"HTTP header to provide additional vendor-specific trace identification information across different distributed tracing systems and is a companion header for the `traceparent` field",
+					false);
+
+				// add Security information to each operation for OAuth2
+				options.OperationFilter<SecurityRequirementsOperationFilter>();
+			});
 
 		return builder;
 	}

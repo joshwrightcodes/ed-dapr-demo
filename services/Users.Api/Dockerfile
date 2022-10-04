@@ -9,8 +9,9 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine AS build
 RUN apk update && apk upgrade
 WORKDIR /src
 COPY ["services/Users.Api/Users.Api.csproj", "services/Users.Api/"]
-COPY ["shared/BasePathFilter/BasePathFilter.csproj", "shared/BasePathFilter/"]
-COPY ["shared/HealthChecks.Dapr/HealthChecks.Dapr.csproj", "shared/HealthChecks.Dapr/"]
+COPY ["shared/AspNetCore.BasePathFilter/AspNetCore.BasePathFilter.csproj", "shared/AspNetCore.BasePathFilter/"]
+COPY ["shared/Dapr.Extensions/Dapr.Extensions.csproj", "shared/Dapr.Extensions/"]
+COPY ["shared/OpenTelemetry.Extensions/OpenTelemetry.Extensions.csproj", "shared/OpenTelemetry.Extensions/"]
 COPY ["Directory.Build.props", ""]
 COPY ["Directory.Packages.props", ""]
 RUN dotnet restore "services/Users.Api/Users.Api.csproj"

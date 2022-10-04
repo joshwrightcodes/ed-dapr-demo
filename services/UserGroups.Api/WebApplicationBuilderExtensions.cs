@@ -7,15 +7,12 @@
 
 namespace DaprDemo.UserGroups.Api;
 
-using Dapr.Client;
-using Dapr.Extensions.Configuration;
-using DaprDemo.Shared.HealthChecks.DaprHealth;
+using DaprDemo.AspNetCore.BasePathFilter;
+using DaprDemo.Dapr.Extension.Configuration;
+using DaprDemo.Dapr.Extension.HealthChecks;
+using DaprDemo.OpenTelemetry.Extensions;
+using global::OpenTelemetry.Resources;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using OpenTelemetry.Exporter;
-using OpenTelemetry.Logs;
-using OpenTelemetry.Metrics;
-using OpenTelemetry.Resources;
-using OpenTelemetry.Trace;
 
 public static class WebApplicationBuilderExtensions
 {
@@ -39,34 +36,8 @@ public static class WebApplicationBuilderExtensions
 		var configureResource = ResourceBuilder
 			.CreateDefault();
 
-		builder.Services.AddOpenTelemetryTracing(options =>
-		{
-			options.SetResourceBuilder(configureResource)
-				.AddSource()
-				.SetSampler(new AlwaysOnSampler())
-				.AddHttpClientInstrumentation()
-				.AddAspNetCoreInstrumentation()
-				.AddOtlpExporter(opt => opt.Protocol = OtlpExportProtocol.Grpc);
-		});
-
-		builder.Logging.AddOpenTelemetry(options =>
-		{
-			options
-				.SetResourceBuilder(configureResource)
-				.AddOtlpExporter(opt => opt.Protocol = OtlpExportProtocol.Grpc);
-
-			options.IncludeScopes = true;
-			options.IncludeFormattedMessage = true;
-		});
-
-		builder.Services.AddOpenTelemetryMetrics(options =>
-		{
-			options.SetResourceBuilder(configureResource)
-				.AddRuntimeInstrumentation()
-				.AddHttpClientInstrumentation()
-				.AddAspNetCoreInstrumentation()
-				.AddOtlpExporter(opt => opt.Protocol = OtlpExportProtocol.Grpc);
-		});
+		builder.Services.AddOpenTelemetryServices(configureResource);
+		builder.Logging.AddOpenTelemetryLogging(configureResource);
 
 		return builder;
 	}
@@ -89,18 +60,14 @@ public static class WebApplicationBuilderExtensions
 
 	public static WebApplicationBuilder AddDapr(this WebApplicationBuilder builder)
 	{
-		builder.Services.AddDaprClient();
+		builder.Services.AddDaprServices();
+		builder.Configuration.AddDaprConfiguration(builder.Services);
+		return builder;
+	}
 
-		var options = builder.Configuration.GetSection(nameof(DaprOptions)).Get<DaprOptions>();
-
-		if (options is not null && !string.IsNullOrWhiteSpace(options.SecretStore))
-		{
-			builder.Configuration.AddDaprSecretStore(
-				options.SecretStore,
-				options.SecretDescriptors?.Select(sd => new DaprSecretDescriptor(sd)) ?? new List<DaprSecretDescriptor>(),
-				new DaprClientBuilder().Build());
-		}
-
+	public static WebApplicationBuilder AddBasePathMiddleware(this WebApplicationBuilder builder)
+	{
+		builder.Services.AddBasePathMiddleware(builder.Configuration);
 		return builder;
 	}
 }

@@ -2,7 +2,7 @@ apiVersion: v2
 name: dapr-demo
 type: application
 version: "0.1.0"
-appVersion: "0.1.0.cdea31a_1664840500"
+appVersion: "0.1.0.9fb2a1a_1664859919"
 home: https://github.com/joshwrightcodes/ed-demo-dapr
 icon: https://github.com/dapr/dapr/raw/master/img/dapr_logo.svg
 description: Demo project for using Dapr

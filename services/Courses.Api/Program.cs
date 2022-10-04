@@ -9,7 +9,6 @@ using System.Net;
 using System.Reflection;
 using Dapr.Client;
 using DaprDemo.Courses.Api;
-using DaprDemo.Shared.BasePathFilter;
 using Microsoft.AspNetCore.Mvc;
 
 const string envVarPrefix = "APP_";
@@ -18,7 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddEnvironmentVariables(envVarPrefix);
 
-builder.Services.AddBasePathMiddleware(builder.Configuration);
+builder.AddBasePathMiddleware();
 builder.AddOpenTelemetry();
 builder.AddDapr();
 builder.AddHealthChecks();
@@ -26,26 +25,10 @@ builder.AddHealthChecks();
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
+builder.AddApiVersioning();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IConfigurationRoot>(builder.Configuration); // Bad, for demo purposes only
-var app = builder.Build();
-
-app.MapGet("/hello", ([FromServices] ILogger<Program> logger) =>
-{
-	// Track work inside of the request
-	logger.LogInformation("Saying Hello");
-	return $"Hello from {Assembly.GetExecutingAssembly().GetName().Name!}!";
-});
-
-app.MapGet("/version", ([FromServices] IConfiguration configuration)
-	=> new Dictionary<string, string?>
-	{
-		["AssemblyInformationalVersion"] = configuration.GetValue<string>("APP_VERSION"),
-	});
-
-app.MapGet("/config", ([FromServices] IConfiguration configuration)
-	=> configuration.AsEnumerable());
+WebApplication app = builder.Build();
 
 app.MapGet(
 	"mail/send",

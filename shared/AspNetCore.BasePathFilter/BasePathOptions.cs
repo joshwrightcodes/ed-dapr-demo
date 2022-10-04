@@ -5,7 +5,7 @@
 // </copyright>
 // ---------------------------------------------------------------------------------------------------------------------
 
-namespace DaprDemo.Shared.BasePathFilter;
+namespace DaprDemo.AspNetCore.BasePathFilter;
 
 /// <summary>
 /// Options for configuring <see cref="BasePathStartupFilter"/>.

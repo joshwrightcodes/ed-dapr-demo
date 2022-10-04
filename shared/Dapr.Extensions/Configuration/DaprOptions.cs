@@ -5,11 +5,9 @@
 // </copyright>
 // ---------------------------------------------------------------------------------------------------------------------
 
-namespace DaprDemo.Courses.Api;
+namespace DaprDemo.Dapr.Extension.Configuration;
 
 public class DaprOptions
 {
-	public string? SecretStore { get; set; }
-
-	public List<string>? SecretDescriptors { get; set; }
+	public DaprSecret? Secrets { get; set; }
 }

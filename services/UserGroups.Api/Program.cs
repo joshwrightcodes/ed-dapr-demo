@@ -8,7 +8,6 @@
 using System.Net;
 using System.Reflection;
 using Dapr.Client;
-using DaprDemo.Shared.BasePathFilter;
 using DaprDemo.UserGroups.Api;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,7 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddEnvironmentVariables(envVarPrefix);
 
-builder.Services.AddBasePathMiddleware(builder.Configuration);
+builder.AddBasePathMiddleware();
 builder.AddOpenTelemetry();
 builder.AddDapr();
 builder.AddHealthChecks();

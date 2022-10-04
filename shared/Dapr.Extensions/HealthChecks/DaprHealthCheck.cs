@@ -5,18 +5,26 @@
 // </copyright>
 // ---------------------------------------------------------------------------------------------------------------------
 
-namespace DaprDemo.Shared.HealthChecks.DaprHealth;
+namespace DaprDemo.Dapr.Extension.HealthChecks;
 
-using Dapr.Client;
+using global::Dapr.Client;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
+/// <summary>
+/// Health Check for monitoring the condition and health of the Dapr sidecar.
+/// </summary>
 public class DaprHealthCheck : IHealthCheck
 {
 	private readonly DaprClient _daprClient;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="DaprHealthCheck"/> class.
+	/// </summary>
+	/// <param name="daprClient">Instance of <see cref="DaprClient"/> to use to communicate with the sidecar.</param>
 	public DaprHealthCheck(DaprClient daprClient)
 		=> _daprClient = daprClient;
 
+	/// <inheritdoc />
 	public async Task<HealthCheckResult> CheckHealthAsync(
 		HealthCheckContext context,
 		CancellationToken cancellationToken = default)

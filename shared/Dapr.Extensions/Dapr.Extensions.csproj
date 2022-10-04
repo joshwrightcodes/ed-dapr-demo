@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <RootNamespace>DaprDemo.Dapr.Extension</RootNamespace>
+        <AssemblyName>DaprDemo.Dapr.Extensions</AssemblyName>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Dapr.AspNetCore" />
+        <PackageReference Include="Dapr.Extensions.Configuration" />
+        <PackageReference Include="FluentValidation" />
+        <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" />
+        <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" />
+        <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" />
+        
+    </ItemGroup>
+
+</Project>

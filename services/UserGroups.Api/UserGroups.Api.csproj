@@ -23,8 +23,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\shared\BasePathFilter\BasePathFilter.csproj" />
-        <ProjectReference Include="..\..\shared\HealthChecks.Dapr\HealthChecks.Dapr.csproj" />
+        <ProjectReference Include="..\..\shared\AspNetCore.BasePathFilter\AspNetCore.BasePathFilter.csproj" />
+        <ProjectReference Include="..\..\shared\Dapr.Extensions\Dapr.Extensions.csproj" />
+        <ProjectReference Include="..\..\shared\OpenTelemetry.Extensions\OpenTelemetry.Extensions.csproj" />
     </ItemGroup>
 
 </Project>

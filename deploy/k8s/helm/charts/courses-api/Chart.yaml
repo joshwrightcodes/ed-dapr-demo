@@ -4,7 +4,7 @@ description: A Helm chart for Kubernetes
 home: https://github.com/joshwrightcodes/ed-demo-dapr
 type: application
 version: "0.1.0"
-appVersion: "0.1.0.cdea31a_1664840500"
+appVersion: "0.1.0.9fb2a1a_1664859919"
 kubeVersion: ">=1.24.0-0"
 maintainers:
   - name: Josh Wright

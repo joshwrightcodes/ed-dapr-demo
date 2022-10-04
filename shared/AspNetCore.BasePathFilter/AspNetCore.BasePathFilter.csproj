@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <RootNamespace>DaprDemo.Shared.BasePathFilter</RootNamespace>
+        <RootNamespace>DaprDemo.AspNetCore.BasePathFilter</RootNamespace>
     </PropertyGroup>
     
     <ItemGroup>

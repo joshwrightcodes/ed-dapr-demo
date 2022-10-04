@@ -4,11 +4,13 @@
         <RootNamespace>DaprDemo.Courses.Api</RootNamespace>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
-
+    
     <ItemGroup>
         <PackageReference Include="Dapr.AspNetCore" />
         <PackageReference Include="Dapr.Actors.AspNetCore" />
         <PackageReference Include="Dapr.Extensions.Configuration" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning.ApiExplorer" />
         <PackageReference Include="OpenTelemetry" />
         <PackageReference Include="OpenTelemetry.Api" />
         <PackageReference Include="OpenTelemetry.Exporter.Console" />
@@ -20,11 +22,19 @@
         <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
         <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
         <PackageReference Include="Swashbuckle.AspNetCore" />
+        <PackageReference Include="Swashbuckle.AspNetCore.Filters" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\shared\BasePathFilter\BasePathFilter.csproj" />
-        <ProjectReference Include="..\..\shared\HealthChecks.Dapr\HealthChecks.Dapr.csproj" />
+        <ProjectReference Include="..\..\shared\AspNetCore.BaseController\AspNetCore.BaseController.csproj" />
+        <ProjectReference Include="..\..\shared\AspNetCore.BasePathFilter\AspNetCore.BasePathFilter.csproj" />
+        <ProjectReference Include="..\..\shared\Dapr.Extensions\Dapr.Extensions.csproj" />
+        <ProjectReference Include="..\..\shared\OpenApi.Extensions\OpenApi.Extensions.csproj" />
+        <ProjectReference Include="..\..\shared\OpenTelemetry.Extensions\OpenTelemetry.Extensions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="V1\SendSampleEmail" />
     </ItemGroup>
 
 </Project>
