@@ -88,3 +88,14 @@ Create OpenTelemetry Operator annotations
 sidecar.opentelemetry.io/inject: {{ .Values.openTelemetry.enableSideCar | quote }}
 {{- end -}}
 {{- end -}}
+
+{{/*
+Create Send From Address
+*/}}
+{{- define "courses-api.smtp.fromAddress" -}}
+{{- if .Values.global.smtp.fromAddress -}}
+{{ .Values.global.smtp.fromAddress }}
+{{- else -}}
+noreply@{{ include "courses-api.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local
+{{- end -}}
+{{- end -}}

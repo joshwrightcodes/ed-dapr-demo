@@ -25,6 +25,11 @@ spec:
       labels:
         {{- include "courses-api.selectorLabels" . | nindent 8 }}
     spec:
+      volumes:
+        - name: {{ include "courses-api.fullname" . }}
+          configMap:
+            name: {{ include "courses-api.fullname" . }}-appsettings
+            optional: true
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
@@ -65,16 +70,16 @@ spec:
               value: {{ include "courses-api.fullname" . }}
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: "service.version={{ .Chart.AppVersion }},service.instance.id=$(POD_NAME),service.namespace=$(POD_NAMESPACE)"
-            - name: APP_DaprOptions__SecretStore
-              value: {{ include "courses-api.fullname" . }}-secrets
-            - name: APP_DaprOptions__SecretDescriptors__0
-              value: {{ include "courses-api.fullname" . }}-mailserver
             {{- with .Values.extraEnvs }}
             {{- . | toYaml | nindent 6 }}
             {{- end }}
           envFrom:
             - configMapRef:
                 name: {{ include "courses-api.fullname" . }}-env
+          volumeMounts:
+            - name: {{ include "courses-api.fullname" . }}
+              mountPath: /app/appsettings.k8s.json
+              subPath: appsettings.k8s.json
           ports:
           {{- range $key, $value := .Values.containerPorts }}
             - name: {{ $key }}

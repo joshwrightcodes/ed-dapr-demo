@@ -14,6 +14,7 @@ public class ApiVersionFilter : IOperationFilter
 {
 	private const string ApiVersionQueryStringParameter = "api-version";
 
+	/// <inheritdoc />
 	public void Apply(OpenApiOperation operation, OperationFilterContext context)
 	{
 		List<OpenApiParameter> qsParams = operation.Parameters

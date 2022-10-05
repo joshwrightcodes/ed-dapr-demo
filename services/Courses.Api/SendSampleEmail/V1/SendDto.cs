@@ -1,15 +1,15 @@
 // ---------------------------------------------------------------------------------------------------------------------
-// <copyright file="DaprSecret.cs" company="Josh Wright">
+// <copyright file="SendDto.cs" company="Josh Wright">
 // Copyright 2022 Josh Wright. Use of this source code is governed by an MIT-style, license that can be found in the
 // LICENSE file or at https://opensource.org/licenses/MIT.
 // </copyright>
 // ---------------------------------------------------------------------------------------------------------------------
 
-namespace DaprDemo.Dapr.Extension.Configuration;
+namespace DaprDemo.Courses.Api.SendSampleEmail.V1;
 
-public class DaprSecret
+public class SendDto
 {
-	public string? Store { get; set; }
+	public string EmailAddress { get; set; } = string.Empty;
 
-	public List<string>? Descriptors { get; set; }
+	public string Name { get; set; } = string.Empty;
 }

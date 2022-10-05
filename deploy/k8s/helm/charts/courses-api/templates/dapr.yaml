@@ -1,0 +1,74 @@
+apiVersion: dapr.io/v1alpha1
+kind: Configuration
+metadata:
+  name: {{ include "courses-api.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "courses-api.labels" . | nindent 4 }}
+spec:
+  mtls:
+    enabled: true
+  metric:
+    enabled: true
+  secrets:
+    scopes:
+      - storeName: {{ include "courses-api.fullname" . }}-mailserver
+        defaultAccess: allow
+  {{ if .Values.dapr -}}
+  {{ with .Values.dapr -}}
+  {{ if .tracing -}}
+  tracing:
+    samplingRate: {{ default 1 .tracing.samplingRate | int | quote }}
+    {{ if .tracing.zipkin -}}
+    zipkin:
+      endpointAddress: {{ .tracing.zipkin.endpoint | quote }}
+    {{- end -}}
+  {{- end }}
+  {{- end }}
+  {{- end }}
+---
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: {{ include "courses-api.fullname" . }}-sendmail
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "courses-api.labels" . | nindent 4 }}
+spec:
+  type: bindings.smtp
+  version: v1
+  metadata:
+    - name: host
+      value: {{ default "localhost" .Values.global.smtp.host | quote }}
+    - name: port
+      value: {{ default 25 .Values.global.smtp.port }}
+    - name: skipTLSVerify
+      value: {{ default false .Values.global.smtp.skipTLSVerify }}
+    - name: emailFrom
+      value: {{ include "courses-api.smtp.fromAddress" . | quote }}
+    {{ if .Values.global.smtp.authenticate }}
+    - name: user
+      secretKeyRef:
+        name: {{ include "courses-api.fullname" . }}-mailserver
+        key: SmtpUser
+    - name: password
+      secretKeyRef:
+        name: {{ include "courses-api.fullname" . }}-mailserver
+        key: SmtpPassword
+    {{ end }}
+auth:
+  secretStore: {{ include "courses-api.fullname" . }}-secrets
+---
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: {{ include "courses-api.fullname" . }}-secrets
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "courses-api.labels" . | nindent 4 }}
+spec:
+  type: secretstores.kubernetes
+  initTimeout: 30s
+  version: v1
+  metadata: []
+  

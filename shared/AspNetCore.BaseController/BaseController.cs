@@ -10,10 +10,13 @@ namespace DaprDemo.AspNetCore.BaseController;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
 
+/// <summary>
+/// Base controller that specifies route and produce/consume mediatypes.
+/// </summary>
 [ApiController]
 [Produces(MediaTypeNames.Application.Json)]
 [Consumes(MediaTypeNames.Application.Json)]
 [Route("[controller]")]
-public class BaseController : ControllerBase
+public abstract class BaseController : ControllerBase
 {
 }

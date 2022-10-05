@@ -56,11 +56,9 @@ app.MapGet(
 		[FromServices] ILogger<Program> logger,
 		CancellationToken cancellationToken) =>
 	{
-		const string sendMailBinding = "sendmail";
-
 		logger.LogInformation("Sending email to {EmailAddress}", email);
 		return daprClient.InvokeBindingAsync(
-			"dapr-demo-users-api-sendmail",
+			"dapr-demo-usergroups-api-sendmail",
 			"create",
 			$"<html><body><p>Hello <b>{name}</b>!</p><p>Email sent from service {Assembly.GetExecutingAssembly().GetName().Name!} ({configuration.GetValue<string>("APP_VERSION")}) on host {Dns.GetHostName()}.</p></body><html>",
 			new Dictionary<string, string>

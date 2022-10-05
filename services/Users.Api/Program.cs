@@ -56,8 +56,6 @@ app.MapGet(
 		[FromServices] ILogger<Program> logger,
 		CancellationToken cancellationToken) =>
 	{
-		const string sendMailBinding = "sendmail";
-
 		logger.LogInformation("Sending email to {EmailAddress}", email);
 		return daprClient.InvokeBindingAsync(
 			"dapr-demo-users-api-sendmail",

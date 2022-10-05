@@ -14,6 +14,12 @@ using Microsoft.AspNetCore.Mvc;
 
 public partial class HelloController : BaseController
 {
+	private static readonly Action<ILogger, Exception> LogSayHello =
+		LoggerMessage.Define(
+			LogLevel.Information,
+			new EventId(0, nameof(SayHello)),
+			"Saying Hello");
+
 	private readonly ILogger<HelloController> _logger;
 
 	public HelloController(ILogger<HelloController> logger)
@@ -25,10 +31,7 @@ public partial class HelloController : BaseController
 	[Produces(MediaTypeNames.Text.Plain)]
 	public ActionResult<string> SayHello()
 	{
-		SayHelloLog();
+		LogSayHello(_logger, null!);
 		return $"Hello from {Assembly.GetExecutingAssembly().GetName().Name!}!";
 	}
-
-	[LoggerMessage(Level = LogLevel.Information, Message = "Saying Hello")]
-	public partial void SayHelloLog();
 }

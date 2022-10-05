@@ -12,6 +12,12 @@ using Microsoft.AspNetCore.Mvc;
 
 public partial class ConfigurationController : BaseController
 {
+	private static readonly Action<ILogger, Exception> LogGetConfig =
+		LoggerMessage.Define(
+			LogLevel.Information,
+			new EventId(0, nameof(GetConfig)),
+			"Getting Config Metadata");
+
 	private readonly ILogger<ConfigurationController> _logger;
 	private readonly IConfiguration _configuration;
 
@@ -24,10 +30,7 @@ public partial class ConfigurationController : BaseController
 	[HttpGet]
 	public ActionResult<List<KeyValuePair<string, string>>> GetConfig()
 	{
-		GetConfigLog();
+		LogGetConfig(_logger, null!);
 		return _configuration.AsEnumerable().ToList();
 	}
-
-	[LoggerMessage(Level = LogLevel.Information, Message = "Sending Config Metadata")]
-	public partial void GetConfigLog();
 }

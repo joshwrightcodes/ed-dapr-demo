@@ -12,7 +12,7 @@ spec:
   - name: host
     value: dapr-demo-mailhog
   - name: port
-    value: 1025
+    value: 25
 {{/*  - name: user*/}}
 {{/*    secretKeyRef:*/}}
 {{/*      name: {{ include "users-api.fullname" . }}-mailserver*/}}

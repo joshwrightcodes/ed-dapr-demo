@@ -9,6 +9,8 @@ namespace DaprDemo.Courses.Api;
 
 using System.Reflection;
 using DaprDemo.AspNetCore.BasePathFilter;
+using DaprDemo.Courses.Api.SendSampleEmail.V1;
+using DaprDemo.Dapr.Extension.Bindings.Smtp;
 using DaprDemo.Dapr.Extension.Configuration;
 using DaprDemo.Dapr.Extension.HealthChecks;
 using DaprDemo.OpenApi.Extensions;
@@ -69,6 +71,9 @@ public static class WebApplicationBuilderExtensions
 	{
 		builder.Services.AddDaprServices();
 		builder.Configuration.AddDaprConfiguration(builder.Services);
+
+		builder.Services.AddDaprSmtpBinding(builder.Configuration, MailController.SmtpOptionsName);
+
 		return builder;
 	}
 
@@ -111,10 +116,10 @@ public static class WebApplicationBuilderExtensions
 		builder.Services
 			.AddSwaggerGen(options =>
 			{
-				// options.SwaggerDoc("v1", builder.Configuration.GetValue<OpenApiInfo>($"{Assembly.GetExecutingAssembly().GetName()}.v1"));
+				options.SwaggerDoc("v1", builder.Configuration.GetValue<OpenApiInfo>($"{Assembly.GetExecutingAssembly().GetName()}.v1"));
 
-				// string filePath = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
-				// options.IncludeXmlComments(filePath);
+				string filePath = Path.Combine(AppContext.BaseDirectory, $"{Assembly.GetExecutingAssembly().GetName().Name}.xml");
+				options.IncludeXmlComments(filePath);
 
 				options.OperationFilter<ApiVersionFilter>();
 

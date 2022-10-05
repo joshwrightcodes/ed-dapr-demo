@@ -6,6 +6,11 @@
 global:
   commonLabels: {}
   part_of: "dapr-demo"
+  smtp:
+    host: dapr-demo-mailhog
+    port: 25
+    skipTLSVerify: true
+#    fromAddress: courses-api@daprdemo.wright.codes
 
 courses-api:
   extraEnv:
@@ -64,6 +69,10 @@ mailhog:
   extraEnv:
     - name: MH_UI_WEB_PATH
       value: mail
+  service:
+    port:
+      smtp: 25
+      http: 80
   ingress:
     enabled: true
     annotations:

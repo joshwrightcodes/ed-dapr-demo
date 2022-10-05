@@ -2,7 +2,6 @@
 
     <PropertyGroup>
         <RootNamespace>DaprDemo.Dapr.Extension</RootNamespace>
-        <AssemblyName>DaprDemo.Dapr.Extensions</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,7 +11,10 @@
         <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" />
         <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" />
         <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.Abstractions" />
-        
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\FluentValidation.Extensions\FluentValidation.Extensions.csproj" />
     </ItemGroup>
 
 </Project>

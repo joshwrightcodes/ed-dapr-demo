@@ -6,6 +6,12 @@
 global:
   commonLabels: {}
   part_of: ""
+  smtp:
+    host: localhost
+    port: 25
+    skipTLSVerify: true
+    authenticate: false
+#    fromAddress: courses-api@daprdemo.wright.codes
 
 replicaCount: 1
 

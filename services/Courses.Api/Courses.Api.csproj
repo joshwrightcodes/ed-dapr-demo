@@ -33,8 +33,4 @@
         <ProjectReference Include="..\..\shared\OpenTelemetry.Extensions\OpenTelemetry.Extensions.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include="V1\SendSampleEmail" />
-    </ItemGroup>
-
 </Project>

@@ -5,15 +5,12 @@
 // </copyright>
 // ---------------------------------------------------------------------------------------------------------------------
 
-using System.Net.Mime;
-using System.Reflection;
-using Microsoft.AspNetCore.Mvc;
-
 namespace DaprDemo.Courses.Api.V1;
 
 using DaprDemo.AspNetCore.BaseController;
+using Microsoft.AspNetCore.Mvc;
 
-public partial class VersionController: BaseController
+public partial class VersionController : BaseController
 {
 	private readonly ILogger<VersionController> _logger;
 	private readonly IConfiguration _configuration;

@@ -1,0 +1,34 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ include "courses-api.fullname" . }}-env
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "courses-api.labels" . | nindent 4 }}
+data:
+  {{- if .Values.extraEnv -}}
+  {{- range $key, $value := .Values.extraEnv }}
+  {{ $value.name }}: {{ $value.value | quote}}
+  {{- end -}}
+  {{- end }}
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ include "courses-api.fullname" . }}-appsettings
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "courses-api.labels" . | nindent 4 }}
+data:
+  appsettings.k8s.json: |-
+    {
+      "DaprOptions": {
+        "SecretStore": "{{ include "courses-api.fullname" . }}-secrets",
+        "SecretDescriptors": [
+          "{{ include "courses-api.fullname" . }}-mailserver"
+        ]
+      },
+      "SmtpBindingOptions":{
+        "BindingName": "{{ include "courses-api.fullname" . }}-sendmail"
+      }
+    }

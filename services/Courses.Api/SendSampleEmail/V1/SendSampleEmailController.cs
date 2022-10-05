@@ -17,43 +17,61 @@ using Microsoft.Extensions.Options;
 
 public partial class MailController : BaseController
 {
+	/// <summary>
+	/// Gets the name of the options section used for this controller.
+	/// </summary>
+	public const string SmtpOptionsName = nameof(SmtpBindingOptions);
+
+	private static readonly Action<ILogger, string, Exception> LogSendEmail =
+		LoggerMessage.Define<string>(
+			LogLevel.Information,
+			new EventId(0, nameof(Send)),
+			"Sending email to {EmailAddress}");
+
 	private readonly ILogger<MailController> _logger;
-	private readonly IOptionsMonitor<SmtpBinding> _options;
+	private readonly IOptionsMonitor<SmtpBindingOptions> _options;
+	private readonly IConfiguration _configuration;
 	private readonly DaprClient _daprClient;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="MailController"/> class.
+	/// </summary>
+	/// <param name="logger">Logging instance.</param>
+	/// <param name="options">Controller Options.</param>
+	/// <param name="configuration">Configuration object to retrieve application version from.</param>
+	/// <param name="daprClient">Dapr Client instance.</param>
 	public MailController(
 		ILogger<MailController> logger,
-		IOptionsMonitor<SmtpBinding> options,
+		IOptionsMonitor<SmtpBindingOptions> options,
+		IConfiguration configuration,
 		DaprClient daprClient)
 	{
 		_logger = logger;
 		_options = options;
+		_configuration = configuration;
 		_daprClient = daprClient;
 	}
 
-	[HttpGet("[action]")]
-	public IActionResult Send(
-		[FromQuery] string email,
-		[FromQuery] string name,
+	[HttpPost("[action]")]
+	public async Task<IActionResult> Send(
+		[FromBody] SendDto data,
 		CancellationToken cancellationToken = default)
 	{
-		SmtpBinding? opts = _options.CurrentValue;
+		SmtpBindingOptions? opts = _options.Get(SmtpOptionsName);
 
-		SendMailLog(email);
+		LogSendEmail(_logger, data.EmailAddress, null!);
 
-		return _daprClient.InvokeBindingAsync(
+		await _daprClient.InvokeBindingAsync(
 			opts.BindingName,
 			opts.Operation,
-			$"<html><body><p>Hello <b>{name}</b>!</p><p>Email sent from service {Assembly.GetExecutingAssembly().GetName().Name!} ({configuration.GetValue<string>("APP_VERSION")}) on host {Dns.GetHostName()}.</p></body><html>",
+			$"<html><body><p>Hello <b>{data.Name}</b>!</p><p>Email sent from service {Assembly.GetExecutingAssembly().GetName().Name!} ({_configuration.GetValue<string>("APP_VERSION")}) on host {Dns.GetHostName()}.</p></body><html>",
 			new Dictionary<string, string>
 			{
-				["emailFrom"] = $"{Dns.GetHostName()}@daprdemo.wright.codes",
-				["emailTo"] = email,
-				["subject"] = $"Hello {name}!",
+				["emailTo"] = data.EmailAddress,
+				["subject"] = $"Hello {data.Name}!",
 			},
 			cancellationToken);
-	}
 
-	[LoggerMessage(Message = "Sending email to {EmailAddress}", Level = LogLevel.Information)]
-	public partial void SendMailLog(string email);
+		return Ok();
+	}
 }

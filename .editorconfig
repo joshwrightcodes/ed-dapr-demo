@@ -85,10 +85,6 @@ dotnet_style_qualification_for_method = false:warning
 dotnet_style_qualification_for_property = false:warning
 
 # StyleCop.Analyzers
-
-# SA1101 - Prefix Local Calls With This
-dotnet_diagnostic.SA1101.severity = none
-
-# SA1600 - Elements Must Be Documented
-# Duplicate of CS1591
-dotnet_diagnostic.SA1600.severity = none
+dotnet_diagnostic.SA1101.severity = none # SA1101 - Prefix Local Calls With This
+dotnet_diagnostic.SA1309.severity = none # SA1309 - Field should not begin with an underscore
+dotnet_diagnostic.SA1600.severity = none # SA1600 - Elements Must Be Documented
