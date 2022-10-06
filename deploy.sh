@@ -39,7 +39,7 @@ log_inf "Deploying ${APP_NAME}"
 
 helm upgrade --install dapr-demo deploy/k8s/helm/charts/dapr-demo/ \
   --namespace dapr-demo --create-namespace \
-  --wait --timeout=30s --debug
+  --wait --timeout=30s
   
 log_inf "Deployed ${APP_NAME}"
 times
