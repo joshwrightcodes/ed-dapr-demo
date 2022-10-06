@@ -1,54 +1,45 @@
 #! /usr/local/bin/bash
+set -euo pipefail
+
+APP_NAME="Dapr Demo"
+export APP_NAME
+
 SCRIPT_NAME="deploy_app"
+export SCRIPT_NAME
+
+SCRIPT_ROOT="$(pwd)"
+export SCRIPT_ROOT
 
 source deploy/scripts/common.sh
-say "Deploying ${APP_NAME}"
 
-CHARTS_DIR="deploy/k8s/helm/charts/"
-say "Charts Location: ${CHARTS_DIR}"
+log_inf "Bash version: ${BASH_VERSION}"
+log_inf "Deploying ${APP_NAME}"
+
+DOCKER_REPO="daprdemo"
 CHART_VERSION=0.1.0
-VERSION_SUFFIX=$(git rev-parse HEAD | cut -c 1-7)
-VERSION_INSTANCE="$(date +"%s")"
-ASSEMBLY_INFO_VERSION="${CHART_VERSION}.${VERSION_SUFFIX}_${VERSION_INSTANCE}"
-say "Chart Version: ${ASSEMBLY_INFO_VERSION}"
+HASH=$(git rev-parse HEAD | cut -c 1-7)
+BUILD="$(date +"%s")"
 
-say "Building Docker Images"
-DOCKER_REPO=daprdemo
-say "Docker Repo: ${DOCKER_REPO}"
-
-for filename in ./services/*/Dockerfile; do
-  say "Building Docker Image: \"${filename}\""
-  DOCKER_DIR="${filename%/*}"
-  IMAGE_NAME=$(basename "${DOCKER_DIR,,}")
-  docker build --file "${filename}" \
-    --tag "${DOCKER_REPO}/${IMAGE_NAME}:latest" \
-    --tag "${DOCKER_REPO}/${IMAGE_NAME}:${CHART_VERSION}.${VERSION_SUFFIX}" \
-    --tag "${DOCKER_REPO}/${IMAGE_NAME}:${ASSEMBLY_INFO_VERSION}" \
-    --build-arg "APP_VERSION=${ASSEMBLY_INFO_VERSION}" \
-    .
-    say "Built Docker Image: ${DOCKER_REPO}/${IMAGE_NAME}:${ASSEMBLY_INFO_VERSION}"
+log_inf "Building Services"
+for dockerfile in services/**/Dockerfile; do
+  PROJECT_DIR=${dockerfile%/*}
+  BUILD_SCRIPT="$(find "${PROJECT_DIR}" -name "build.sh")"
+  if [ -n "$BUILD_SCRIPT" ]; then
+    eval "${BUILD_SCRIPT}" "${CHART_VERSION}" "${HASH}" "${BUILD}" "${DOCKER_REPO}" "${SCRIPT_ROOT}"
+  fi
 done
+log_inf "Services Built"
 
-say "Updating Chart App Versions to ${ASSEMBLY_INFO_VERSION} and building dependencies"
+log_inf "Preparing App"
 
-for filename in ${CHARTS_DIR}*/Chart.yaml; do
-  CHART_DIR="${filename%/*}"
-  say "Updating version for \"$(basename "${CHART_DIR,,}")\""
-  sed -i '' "s/^appVersion:.*$/appVersion: \"${ASSEMBLY_INFO_VERSION}\"/" "${filename}"
-  sed -i '' "s/^version:.*$/version: \"${CHART_VERSION}\"/" "${filename}"
-  
-  say "Updating Dependencies for \"$(basename "${CHART_DIR,,}")\""
-  helm dependency update "${CHART_DIR}"
-  helm dependency build "${CHART_DIR}"
-done
+update_helm_version "dapr-demo" "deploy/k8s/helm/charts/dapr-demo" "${CHART_VERSION}" "${CHART_VERSION}.${HASH}.${BUILD}"
+update_helm_dependencies "dapr-demo" "deploy/k8s/helm/charts/dapr-demo"
 
-say "Deploying Main Application To K8s"
+log_inf "Deploying ${APP_NAME}"
 
-helm upgrade --install dapr-demo ${CHARTS_DIR}/z-dapr-demo/ \
+helm upgrade --install dapr-demo deploy/k8s/helm/charts/dapr-demo/ \
   --namespace dapr-demo --create-namespace \
   --wait --timeout=30s --debug
   
-say "Deployed ${APP_NAME}"
-say "Completed in:"
+log_inf "Deployed ${APP_NAME}"
 times
-exit 0

@@ -1,10 +1,10 @@
 apiVersion: v2
-name: courses-api
+name: users-api
 description: A Helm chart for Kubernetes
 home: https://github.com/joshwrightcodes/ed-demo-dapr
 type: application
 version: "0.1.0"
-appVersion: "0.1.0.ddb1bb1_1664962365"
+appVersion: "0.1.0.22e5461.1665027303"
 kubeVersion: ">=1.24.0-0"
 maintainers:
   - name: Josh Wright

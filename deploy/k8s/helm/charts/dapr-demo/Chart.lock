@@ -9,13 +9,13 @@ dependencies:
   repository: https://codecentric.github.io/helm-charts
   version: 5.2.0
 - name: courses-api
-  repository: file://../courses-api/
+  repository: file://../../../../../services/Courses.Api/deploy/k8s/helm/charts/courses-api/
   version: 0.1.0
 - name: usergroups-api
-  repository: file://../usergroups-api/
+  repository: file://../../../../../services/UserGroups.Api/deploy/k8s/helm/charts/usergroups-api/
   version: 0.1.0
 - name: users-api
-  repository: file://../users-api/
+  repository: file://../../../../../services/Users.Api/deploy/k8s/helm/charts/users-api/
   version: 0.1.0
-digest: sha256:a28ab7bf53d4abe000536f2c12cc95e108e2bdf54d9b5ea58c448ef10ad8805f
-generated: "2022-09-28T17:07:25.252488+10:00"
+digest: sha256:94867fa05b536aa1a4b29034e75dea316589c20547ae5155efca106bd544d221
+generated: "2022-10-06T14:30:03.72924+11:00"

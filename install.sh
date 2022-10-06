@@ -56,7 +56,7 @@ declare -n dependency
 # $3 Repo
 # $4 Namespace
 install_dependency() {
-  say "Install ${bold:-}${1}${normal:-}"
+  log_inf "Install ${bold:-}${1}${normal:-}"
   
   if test -f "${DEPENDENCIES_DIR}/values/${2}.values.yaml"; then
       helm upgrade \
@@ -66,7 +66,7 @@ install_dependency() {
         --values "${DEPENDENCIES_DIR}/values/${2}.values.yaml" \
         --wait --timeout="${HELM_TIMEOUT}"
   else
-    say_warning "No values file for chart ${2}, using chart defaults"
+    log_warning "No values file for chart ${2}, using chart defaults"
     
     helm upgrade \
       --install "${2}" "${2}" \
@@ -78,7 +78,7 @@ install_dependency() {
   shopt -s nullglob
 
   for bootstrap in ${DEPENDENCIES_DIR}/bootstrap/${2}*.yaml; do
-    say "Applying config ${bootstrap}"
+    log_inf "Applying config ${bootstrap}"
     kubectl apply -f "${bootstrap}"
   done
 
@@ -86,17 +86,17 @@ install_dependency() {
 }
 
 DEPENDENCIES_DIR="deploy/k8s/helm/dependencies"
-say "Dependencies Directory: ${DEPENDENCIES_DIR}"
+log_inf "Dependencies Directory: ${DEPENDENCIES_DIR}"
 HELM_TIMEOUT="2m"
-say "Helm Timeout: ${HELM_TIMEOUT}"
+log_inf "Helm Timeout: ${HELM_TIMEOUT}"
 
-say "Deploying Dependencies"
+log_inf "Deploying Dependencies"
 
 for dependency in ${!dependency@}; do
-    install_dependency "${dependency[Name]}" "${dependency[Chart]}" "${dependency[Repo]}" "${dependency[Namespace]}"
+  install_dependency "${dependency[Name]}" "${dependency[Chart]}" "${dependency[Repo]}" "${dependency[Namespace]}"
 done
 
-say "Finished Deploying Dependencies for ${APP_NAME}"
-say "Completed in:"
+log_inf "Finished Deploying Dependencies for ${APP_NAME}"
+log_inf "Completed in:"
 times
 exit 0

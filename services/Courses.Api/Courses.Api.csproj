@@ -33,4 +33,8 @@
         <ProjectReference Include="..\..\shared\OpenTelemetry.Extensions\OpenTelemetry.Extensions.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="deploy\k8s\helm\charts" />
+    </ItemGroup>
+
 </Project>
